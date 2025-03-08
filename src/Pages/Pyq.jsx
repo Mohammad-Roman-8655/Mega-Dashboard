@@ -3,32 +3,44 @@ import { useState } from "react";
 
 const pyqsData = [
   {
-    subject: "Data Structure using C",
-    college: "Integral University",
-    addedBy: "realstar",
-    status: "Approved",
+    standard: "1st",
+    subjectName: "Hindi",
+    url: "https://pyq.com",
+    
   },
   {
-    subject: "Numerical and Statistical Methods",
-    college: "Integral University",
-    addedBy: "Student Senior",
-    status: "Approved",
+    standard: "11th",
+    subjectName: "English",
+    url: "https://pyq.com",
+    
   },
   {
-    subject: "Effective Communication and Media Studies in English",
-    college: "Integral University",
-    addedBy: "Student Senior",
-    status: "Approved",
+    standard: "12th",
+    subjectName: "Biology",
+    url: "https://pyq.com",
+    
   },
 ];
 
 function Pyq() {
+  const [isAddPyqModalOpen,setIsAddPyqModalOpen]=useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPyq, setCurrentPyq] = useState(null);
 
   const openModal = (pyq) => {
     setCurrentPyq(pyq);
     setIsModalOpen(true);
+
+  };
+  const openPyqModal = () => {
+    
+    setIsAddPyqModalOpen(true);
+    
+  };
+  const closePyqModal = () => {
+    
+    setIsAddPyqModalOpen(false);
+    
   };
 
   const closeModal = () => {
@@ -38,33 +50,63 @@ function Pyq() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Pyqs Management</h1>
+      <h1 className="text-2xl font-bold mb-15 text-center ">Pyqs Management</h1>
+      <div className='flex justify-around items-end mb-5 '>
+      <div className="Standards lg:w-[40%] md:w-[90%] sm:w-[90%] w-[90%]  flex flex-col ">
+                  <label for="Standards" className='font-semibold mb-2'>Select Class<span className='text-red-600 font-bold'>*</span></label>
+
+                  <select id="Standards" className='border-2  h-10 rounded-md '>
+                     <option value="Standards" className='p-2'>Select Class </option>
+                     <option value="Pre-Nursery">Pre-Nursery</option>
+                     <option value="Nursery">Nursery</option>
+                     <option value="LKG">LKG</option>
+                     <option value="UKG">UKG</option>
+                     <option value="1">1st</option>
+                     <option value="2">2nd</option>
+                     <option value="3">3rd</option>
+                     <option value="4">4th</option>
+                     <option value="5">5th</option>
+                     <option value="6">6th</option>
+                     <option value="7">7th</option>
+                     <option value="8">8th</option>
+                     <option value="9">9th</option>
+                     <option value="10">10th</option>
+                     <option value="11">11th</option>
+                     <option value="12">12th</option>
+                  </select>
+      </div> 
+     
+      <button className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
+   
+      </div>
+      <button className="bg-blue-800 text-white px-3 py-1 rounded mt-10 mb-5 font-semibold   " onClick={openPyqModal}>Add Pyq</button>
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
+           <th className="p-3 border">Serial No.</th>
+            <th className="p-3 border">Standard</th>
             <th className="p-3 border">Subject Name</th>
-            <th className="p-3 border">College Name</th>
-            <th className="p-3 border">Added by</th>
-            <th className="p-3 border">Status</th>
+            <th className="p-3 border">Link</th>
+           
             <th className="p-3 border">Actions</th>
           </tr>
         </thead>
         <tbody>
           {pyqsData.map((pyq, index) => (
             <tr key={index} className="border">
-              <td className="p-3 border">{pyq.subject}</td>
-              <td className="p-3 border">{pyq.college}</td>
-              <td className="p-3 border">{pyq.addedBy}</td>
-              <td className="p-3 border">{pyq.status}</td>
+              <td className="p-3 border text-center ">{index+1}</td>
+              <td className="p-3 border text-center ">{pyq.standard}</td>
+              <td className="p-3 border text-center ">{pyq.subjectName}</td>
+              <td className="p-3 border text-center"><a  href={pyq.url}><button className="bg-blue-600 text-white px-3 py-1 rounded w-[50%] ">Download</button></a></td>
               <td className="p-3 border flex gap-2">
-                <button className="bg-green-500 text-white px-3 py-1 rounded">View</button>
+                
                 <button
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
+                  className="bg-blue-500 text-white px-3 py-1 rounded w-[50%]"
                   onClick={() => openModal(pyq)}
                 >
                   Edit
                 </button>
-                <button className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
               </td>
             </tr>
           ))}
@@ -73,19 +115,25 @@ function Pyq() {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
+          <div className="bg-white p-6 rounded shadow-lg w-[50%]">
             <h2 className="text-xl font-bold mb-4">Edit Pyq</h2>
             <form>
-              <label className="block mb-2">Subject Name</label>
+              <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentPyq.subject}
+                defaultValue={currentPyq.standard}
                 className="border p-2 w-full mb-4"
               />
-              <label className="block mb-2">College Name</label>
+              <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentPyq.college}
+                defaultValue={currentPyq.subjectName}
+                className="border p-2 w-full mb-4"
+              />
+               <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
+              <input
+                type="text"
+                defaultValue={currentPyq.url}
                 className="border p-2 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
@@ -101,6 +149,44 @@ function Pyq() {
             </form>
           </div>
         </div>
+      )}
+
+      {isAddPyqModalOpen && (
+         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+         <div className="bg-white p-6 rounded shadow-lg w-[50%]">
+           <h2 className="text-xl font-bold mb-4">Add Pyq</h2>
+           <form>
+             <label className="block mb-2 ">Standard <span className='text-red-700 font-semibold'>*</span></label>
+             <input
+               type="text"
+               
+               className="border p-2 w-full mb-4"
+             />
+             <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
+             <input
+               type="text"
+               
+               className="border p-2 w-full mb-4"
+             />
+              <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
+             <input
+               type="text"
+               
+               className="border p-2 w-full mb-4"
+             />
+             <div className="flex justify-end gap-2">
+               <button
+                 type="button"
+                 className="bg-gray-500 text-white px-4 py-2 rounded"
+                 onClick={closePyqModal}
+               >
+                 Cancel
+               </button>
+               <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+             </div>
+           </form>
+         </div>
+       </div>
       )}
     </div>
   );
