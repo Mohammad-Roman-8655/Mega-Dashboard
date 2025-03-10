@@ -1,62 +1,155 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
-const MockPapersData = [
-    {
-      standard: "10th",
-      subjectName: "Mathematics",
-      mockPaperUrl: "https://example.com/mock-papers/math-10.pdf"
-    },
-    {
-      standard: "12th",
-      subjectName: "Physics",
-      mockPaperUrl: "https://example.com/mock-papers/physics-12.pdf"
-    },
-    {
-      standard: "9th",
-      subjectName: "English",
-      mockPaperUrl: "https://example.com/mock-papers/english-9.pdf"
-    },
-    {
-      standard: "11th",
-      subjectName: "Chemistry",
-      mockPaperUrl: "https://example.com/mock-papers/chemistry-11.pdf"
-    },
-    {
-      standard: "8th",
-      subjectName: "History",
-      mockPaperUrl: "https://example.com/mock-papers/history-8.pdf"
-    }
-];
+// const MockPapersData = [
+//     {
+//       standard: "10th",
+//       subjectName: "Mathematics",
+//       mockPaperUrl: "https://example.com/mock-papers/math-10.pdf"
+//     },
+//     {
+//       standard: "12th",
+//       subjectName: "Physics",
+//       mockPaperUrl: "https://example.com/mock-papers/physics-12.pdf"
+//     },
+//     {
+//       standard: "9th",
+//       subjectName: "English",
+//       mockPaperUrl: "https://example.com/mock-papers/english-9.pdf"
+//     },
+//     {
+//       standard: "11th",
+//       subjectName: "Chemistry",
+//       mockPaperUrl: "https://example.com/mock-papers/chemistry-11.pdf"
+//     },
+//     {
+//       standard: "8th",
+//       subjectName: "History",
+//       mockPaperUrl: "https://example.com/mock-papers/history-8.pdf"
+//     }
+// ];
 function MockPaper() {
 
  
- 
-   const [isAddMockPaperModalOpen,setIsAddMockPaperModalOpen]=useState(false);
-   const [isModalOpen, setIsModalOpen] = useState(false);
-   const [currentMockPaper, setCurrentMockPaper] = useState(null);
- 
-   const openModal = (MockPaper) => {
+ const [isAddMockPaperModalOpen,setIsAddMockPaperModalOpen]=useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentMockPaper, setCurrentMockPaper] = useState(null);
+  
+    const openModal = (MockPaper) => {
      setCurrentMockPaper(MockPaper);
+     setEditingMockPaper(MockPaper); // This ensures _id is included
      setIsModalOpen(true);
+   };
+   
+    const openMockPaperModal = () => {
+      
+      setIsAddMockPaperModalOpen(true);
+      
+    };
+    const closeMockPaperModal = () => {
+      
+      setIsAddMockPaperModalOpen(false);
+      
+    };
+  
+    const closeModal = () => {
+      setIsModalOpen(false);
+      setCurrentMockPaper(null);
+    };
+    const [newMockPaper, setNewMockPaper] = useState({
+      standard: "",
+      subjectName: "",
+      mockPaperUrl: ""
+ });
  
-   };
-   const openMockPaperModal = () => {
-     
-     setIsAddMockPaperModalOpen(true);
-     
-   };
-   const closeMockPaperModal = () => {
-     
-     setIsAddMockPaperModalOpen(false);
-     
-   };
+ const handleInputChange = (e) => {
+   setNewMockPaper({ ...newMockPaper, [e.target.name]: e.target.value });
+ };
  
-   const closeModal = () => {
-     setIsModalOpen(false);
-     setCurrentMockPaper(null);
-   };
+ const handleAddMockPaper = async () => {
+   try {
+     const response = await fetch("http://localhost:8080/MockPaper", {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify(newMockPaper),
+     });
  
+     if (response.ok) {
+       alert("MockPaper added successfully!");
+       closeMockPaperModal();
+       fetchMockPapers(); // Refresh the list
+     } else {
+       alert("Failed to add MockPaper.");
+     }
+   } catch (error) {
+     console.error("Error:", error);
+   }
+ };
+ const [editingMockPaper, setEditingMockPaper] = useState(null);
+ 
+ const handleEditInputChange = (e) => {
+   setEditingMockPaper({ ...editingMockPaper, [e.target.name]: e.target.value });
+ };
+ 
+ 
+ const handleUpdateMockPaper = async () => {
+   try {
+     const response = await fetch(`http://localhost:8080/MockPaper/${editingMockPaper._id}`, {
+       method: "PUT",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify(editingMockPaper),
+     });
+ 
+     if (response.ok) {
+       alert("MockPaper updated successfully!");
+       closeModal();
+       fetchMockPapers(); // Refresh the list
+     } else {
+       alert("Failed to update MockPaper.");
+     }
+   } catch (error) {
+     console.error("Error:", error);
+   }
+ };
+ 
+ const handleDeleteMockPaper = async (id) => {
+   if (!window.confirm("Are you sure you want to delete this MockPaper?")) return;
+ 
+   try {
+     const response = await fetch(`http://localhost:8080/MockPaper/${id}`, {
+       method: "DELETE",
+     });
+ 
+     if (response.ok) {
+       alert("MockPaper deleted successfully!");
+       fetchMockPapers(); // Refresh the list
+     } else {
+       alert("Failed to delete MockPaper.");
+     }
+   } catch (error) {
+     console.error("Error:", error);
+   }
+ };
+ const [MockPapers, setMockPapers] = useState([]);
+ 
+ const fetchMockPapers = async () => {
+   try {
+     const response = await fetch("http://localhost:8080/MockPaper");
+     const data = await response.json();
+     setMockPapers(data);
+   } catch (error) {
+     console.error("Error:", error);
+   }
+ };
+ 
+ useEffect(() => {
+   fetchMockPapers();
+ }, []);
+
    return (
      <div className="p-6">
        <h1 className="text-2xl font-bold mb-15 text-center ">Mock Papers Management</h1>
@@ -101,7 +194,7 @@ function MockPaper() {
            </tr>
          </thead>
          <tbody>
-           {MockPapersData.map((MockPaper, index) => (
+           {MockPapers.map((MockPaper, index) => (
              <tr key={index} className="border">
                <td className="p-3 border text-center ">{index+1}</td>
                <td className="p-3 border text-center ">{MockPaper.subjectName}</td>
@@ -115,7 +208,7 @@ function MockPaper() {
                  >
                    Edit
                  </button>
-                 <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
+                 <button onClick={() => handleDeleteMockPaper(MockPaper._id)} className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
                </td>
              </tr>
            ))}
@@ -126,23 +219,32 @@ function MockPaper() {
          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
            <div className="bg-white p-6 rounded shadow-lg w-[50%]">
              <h2 className="text-xl font-bold mb-4">Edit MockPaper</h2>
-             <form>
+             <form onSubmit={(e) => { e.preventDefault(); handleUpdateMockPaper(); }}>
                <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                 defaultValue={currentMockPaper.standard}
+                 name="standard" 
+                 onChange={handleEditInputChange} 
+                 value={editingMockPaper?.standard || ''} 
+                 required 
                  className="border p-2 w-full mb-4"
                />
                <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                 defaultValue={currentMockPaper.subjectName}
+                 name="subjectName" 
+                 onChange={handleEditInputChange} 
+                 value={editingMockPaper?.subjectName || ''} 
+                 required 
                  className="border p-2 w-full mb-4"
                />
                 <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                 defaultValue={currentMockPaper.mockPaperUrl}
+                 name="mockPaperUrl" 
+                 onChange={handleEditInputChange} 
+                 value={editingMockPaper?.mockPaperUrl || ''} 
+                 required 
                  className="border p-2 w-full mb-4"
                />
                <div className="flex justify-end gap-2">
@@ -153,7 +255,7 @@ function MockPaper() {
                  >
                    Cancel
                  </button>
-                 <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                 <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
                </div>
              </form>
            </div>
@@ -164,23 +266,35 @@ function MockPaper() {
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-[50%]">
             <h2 className="text-xl font-bold mb-4">Add MockPaper</h2>
-            <form>
+            <form onSubmit={(e) => { e.preventDefault(); handleAddMockPaper(); }}>
             <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                
+                 name="standard" 
+                 onChange={handleInputChange} 
+                 value={newMockPaper.standard} 
+                 placeholder="Standard" 
+                 required
                  className="border p-2 w-full mb-4"
                />
                <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                
+                 name="subjectName" 
+                 onChange={handleInputChange} 
+                 value={newMockPaper.subjectName} 
+                 placeholder="Subject Name" 
+                 required
                  className="border p-2 w-full mb-4"
                />
                 <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                 
+                 name="mockPaperUrl" 
+                 onChange={handleInputChange} 
+                 value={newMockPaper.mockPaperUrl} 
+                 placeholder="Mock Paper Url" 
+                 required
                  className="border p-2 w-full mb-4"
                />
               <div className="flex justify-end gap-2">
@@ -191,7 +305,7 @@ function MockPaper() {
                 >
                   Cancel
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
               </div>
             </form>
           </div>

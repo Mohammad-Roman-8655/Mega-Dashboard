@@ -1,67 +1,163 @@
 import React from 'react'
-import { useState } from 'react';
-const StudyNotesData = [
+import { useState,useEffect } from 'react';
+// const StudyNotesData = [
 
-    {
-      standard: "10th",
-      subjectName: "Mathematics",
-      chapter: "Algebra",
-      notesUrl: "https://example.com/study-notes/math-algebra.pdf"
-    },
-    {
-      standard: "12th",
-      subjectName: "Physics",
-      chapter: "Electromagnetism",
-      notesUrl: "https://example.com/study-notes/physics-electromagnetism.pdf"
-    },
-    {
-      standard: "9th",
-      subjectName: "Biology",
-      chapter: "Cell Structure",
-      notesUrl: "https://example.com/study-notes/biology-cell-structure.pdf"
-    },
-    {
-      standard: "11th",
-      subjectName: "Chemistry",
-      chapter: "Organic Chemistry",
-      notesUrl: "https://example.com/study-notes/chemistry-organic.pdf"
-    },
-    {
-      standard: "8th",
-      subjectName: "History",
-      chapter: "French Revolution",
-      notesUrl: "https://example.com/study-notes/history-french-revolution.pdf"
-    }
-];
+//     {
+//       standard: "10th",
+//       subjectName: "Mathematics",
+//       chapter: "Algebra",
+//       notesUrl: "https://example.com/study-notes/math-algebra.pdf"
+//     },
+//     {
+//       standard: "12th",
+//       subjectName: "Physics",
+//       chapter: "Electromagnetism",
+//       notesUrl: "https://example.com/study-notes/physics-electromagnetism.pdf"
+//     },
+//     {
+//       standard: "9th",
+//       subjectName: "Biology",
+//       chapter: "Cell Structure",
+//       notesUrl: "https://example.com/study-notes/biology-cell-structure.pdf"
+//     },
+//     {
+//       standard: "11th",
+//       subjectName: "Chemistry",
+//       chapter: "Organic Chemistry",
+//       notesUrl: "https://example.com/study-notes/chemistry-organic.pdf"
+//     },
+//     {
+//       standard: "8th",
+//       subjectName: "History",
+//       chapter: "French Revolution",
+//       notesUrl: "https://example.com/study-notes/history-french-revolution.pdf"
+//     }
+// ];
 function StudyNotes() {
   
   
 
-    const [isAddStudyNoteModalOpen,setIsAddStudyNoteModalOpen]=useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentStudyNote, setCurrentStudyNote] = useState(null);
-  
-    const openModal = (StudyNote) => {
-      setCurrentStudyNote(StudyNote);
-      setIsModalOpen(true);
-  
-    };
-    const openStudyNoteModal = () => {
+   const [isAddStudyNoteModalOpen,setIsAddStudyNoteModalOpen]=useState(false);
+       const [isModalOpen, setIsModalOpen] = useState(false);
+       const [currentStudyNote, setCurrentStudyNote] = useState(null);
+     
+       const openModal = (StudyNote) => {
+        setCurrentStudyNote(StudyNote);
+        setEditingStudyNote(StudyNote); // This ensures _id is included
+        setIsModalOpen(true);
+      };
       
-      setIsAddStudyNoteModalOpen(true);
-      
+       const openStudyNoteModal = () => {
+         
+         setIsAddStudyNoteModalOpen(true);
+         
+       };
+       const closeStudyNoteModal = () => {
+         
+         setIsAddStudyNoteModalOpen(false);
+         
+       };
+     
+       const closeModal = () => {
+         setIsModalOpen(false);
+         setCurrentStudyNote(null);
+       };
+       const [newStudyNote, setNewStudyNote] = useState({
+         standard: "",
+         subjectName: "",
+         chapter: "",
+         notesUrl: ""
+       
+    });
+    
+    const handleInputChange = (e) => {
+      setNewStudyNote({ ...newStudyNote, [e.target.name]: e.target.value });
     };
-    const closeStudyNoteModal = () => {
-      
-      setIsAddStudyNoteModalOpen(false);
-      
+    
+    const handleAddStudyNote = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/StudyNotes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newStudyNote),
+        });
+    
+        if (response.ok) {
+          alert("StudyNote added successfully!");
+          closeStudyNoteModal();
+          fetchStudyNotes(); // Refresh the list
+        } else {
+          alert("Failed to add StudyNote.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
     };
-  
-    const closeModal = () => {
-      setIsModalOpen(false);
-      setCurrentStudyNote(null);
+    const [editingStudyNote, setEditingStudyNote] = useState(null);
+    
+    const handleEditInputChange = (e) => {
+      setEditingStudyNote({ ...editingStudyNote, [e.target.name]: e.target.value });
     };
-  
+    
+    
+    const handleUpdateStudyNote = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/StudyNotes/${editingStudyNote._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editingStudyNote),
+        });
+    
+        if (response.ok) {
+          alert("StudyNote updated successfully!");
+          closeModal();
+          fetchStudyNotes(); // Refresh the list
+        } else {
+          alert("Failed to update StudyNote.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    const handleDeleteStudyNote = async (id) => {
+      if (!window.confirm("Are you sure you want to delete this StudyNote?")) return;
+    
+      try {
+        const response = await fetch(`http://localhost:8080/StudyNotes/${id}`, {
+          method: "DELETE",
+        });
+    
+        if (response.ok) {
+          alert("StudyNote deleted successfully!");
+          fetchStudyNotes(); // Refresh the list
+        } else {
+          alert("Failed to delete StudyNote.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [StudyNotes, setStudyNotes] = useState([]);
+    
+    const fetchStudyNotes = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/StudyNotes");
+        const data = await response.json();
+        setStudyNotes(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    useEffect(() => {
+      fetchStudyNotes();
+    }, []);
+   
     return (
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-15 text-center ">Study Notes Management</h1>
@@ -121,7 +217,7 @@ function StudyNotes() {
             </tr>
           </thead>
           <tbody>
-            {StudyNotesData.map((StudyNote, index) => (
+            {StudyNotes.map((StudyNote, index) => (
               <tr key={index} className="border">
                 <td className="p-3 border text-center ">{index+1}</td>
                 <td className="p-3 border text-center ">{StudyNote.subjectName}</td>
@@ -136,7 +232,7 @@ function StudyNotes() {
                   >
                     Edit
                   </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
+                  <button onClick={() => handleDeleteStudyNote(StudyNote._id)} className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
                 </td>
               </tr>
             ))}
@@ -147,29 +243,41 @@ function StudyNotes() {
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-[50%]">
               <h2 className="text-xl font-bold mb-4">Edit StudyNote</h2>
-              <form>
+              <form onSubmit={(e) => { e.preventDefault(); handleUpdateStudyNote(); }}>
                 <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentStudyNote.standard}
+                  name="standard" 
+                  onChange={handleEditInputChange} 
+                  value={editingStudyNote?.standard || ''} 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                 <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentStudyNote.subjectName}
+                  name="subjectName" 
+                  onChange={handleEditInputChange} 
+                  value={editingStudyNote?.subjectName || ''} 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                   <label className="block mb-2">Chapter Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentStudyNote.chapter}
+                  name="chapter" 
+                  onChange={handleEditInputChange} 
+                  value={editingStudyNote?.chapter || ''} 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                  <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentStudyNote.notesUrl}
+                  name="notesUrl" 
+                  onChange={handleEditInputChange} 
+                  value={editingStudyNote?.notesUrl || ''} 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                 <div className="flex justify-end gap-2">
@@ -180,7 +288,7 @@ function StudyNotes() {
                   >
                     Cancel
                   </button>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
                 </div>
               </form>
             </div>
@@ -191,29 +299,45 @@ function StudyNotes() {
            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
            <div className="bg-white p-6 rounded shadow-lg w-[50%]">
              <h2 className="text-xl font-bold mb-4">Add StudyNote</h2>
-             <form>
+             <form onSubmit={(e) => { e.preventDefault(); handleAddStudyNote(); }}>
              <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                 
+                  name="standard" 
+                  onChange={handleInputChange} 
+                  value={newStudyNote.standard} 
+                  placeholder="Standard" 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                 <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                
+                  name="subjectName" 
+                  onChange={handleInputChange} 
+                  value={newStudyNote.subjectName} 
+                  placeholder="Subject Name" 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                   <label className="block mb-2">Chapter Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  
+                  name="chapter" 
+                  onChange={handleInputChange} 
+                  value={newStudyNote.chapter} 
+                  placeholder="Chapter Name" 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                  <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                
+                  name="notesUrl" 
+                  onChange={handleInputChange} 
+                  value={newStudyNote.notesUrl} 
+                  placeholder="Notes Url" 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                <div className="flex justify-end gap-2">
@@ -224,7 +348,7 @@ function StudyNotes() {
                  >
                    Cancel
                  </button>
-                 <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                 <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
                </div>
              </form>
            </div>

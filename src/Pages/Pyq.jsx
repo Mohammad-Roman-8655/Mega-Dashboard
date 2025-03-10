@@ -1,52 +1,147 @@
 import React from 'react'
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
-const pyqsData = [
-  {
-    standard: "1st",
-    subjectName: "Hindi",
-    url: "https://pyq.com",
+// const pyqsData = [
+//   {
+//     standard: "1st",
+//     subjectName: "Hindi",
+//     url: "https://pyq.com",
     
-  },
-  {
-    standard: "11th",
-    subjectName: "English",
-    url: "https://pyq.com",
+//   },
+//   {
+//     standard: "11th",
+//     subjectName: "English",
+//     url: "https://pyq.com",
     
-  },
-  {
-    standard: "12th",
-    subjectName: "Biology",
-    url: "https://pyq.com",
+//   },
+//   {
+//     standard: "12th",
+//     subjectName: "Biology",
+//     url: "https://pyq.com",
     
-  },
-];
+//   },
+// ];
 
 function Pyq() {
-  const [isAddPyqModalOpen,setIsAddPyqModalOpen]=useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentPyq, setCurrentPyq] = useState(null);
-
-  const openModal = (pyq) => {
-    setCurrentPyq(pyq);
-    setIsModalOpen(true);
-
-  };
-  const openPyqModal = () => {
-    
-    setIsAddPyqModalOpen(true);
-    
-  };
-  const closePyqModal = () => {
-    
-    setIsAddPyqModalOpen(false);
-    
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentPyq(null);
-  };
+   const [isAddPyqModalOpen,setIsAddPyqModalOpen]=useState(false);
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const [currentPyq, setCurrentPyq] = useState(null);
+      
+        const openModal = (Pyq) => {
+         setCurrentPyq(Pyq);
+         setEditingPyq(Pyq); // This ensures _id is included
+         setIsModalOpen(true);
+       };
+       
+        const openPyqModal = () => {
+          
+          setIsAddPyqModalOpen(true);
+          
+        };
+        const closePyqModal = () => {
+          
+          setIsAddPyqModalOpen(false);
+          
+        };
+      
+        const closeModal = () => {
+          setIsModalOpen(false);
+          setCurrentPyq(null);
+        };
+        const [newPyq, setNewPyq] = useState({
+           standard: "",
+           subjectName: "",
+           url: "",
+     });
+     
+     const handleInputChange = (e) => {
+       setNewPyq({ ...newPyq, [e.target.name]: e.target.value });
+     };
+     
+     const handleAddPyq = async () => {
+       try {
+         const response = await fetch("http://localhost:8080/Pyq", {
+           method: "POST",
+           headers: {
+             "Content-Type": "application/json",
+           },
+           body: JSON.stringify(newPyq),
+         });
+     
+         if (response.ok) {
+           alert("Pyq added successfully!");
+           closePyqModal();
+           fetchPyqs(); // Refresh the list
+         } else {
+           alert("Failed to add Pyq.");
+         }
+       } catch (error) {
+         console.error("Error:", error);
+       }
+     };
+     const [editingPyq, setEditingPyq] = useState(null);
+     
+     const handleEditInputChange = (e) => {
+       setEditingPyq({ ...editingPyq, [e.target.name]: e.target.value });
+     };
+     
+     
+     const handleUpdatePyq = async () => {
+       try {
+         const response = await fetch(`http://localhost:8080/Pyq/${editingPyq._id}`, {
+           method: "PUT",
+           headers: {
+             "Content-Type": "application/json",
+           },
+           body: JSON.stringify(editingPyq),
+         });
+     
+         if (response.ok) {
+           alert("Pyq updated successfully!");
+           closeModal();
+           fetchPyqs(); // Refresh the list
+         } else {
+           alert("Failed to update Pyq.");
+         }
+       } catch (error) {
+         console.error("Error:", error);
+       }
+     };
+     
+     const handleDeletePyq = async (id) => {
+       if (!window.confirm("Are you sure you want to delete this Pyq?")) return;
+     
+       try {
+         const response = await fetch(`http://localhost:8080/Pyq/${id}`, {
+           method: "DELETE",
+         });
+     
+         if (response.ok) {
+           alert("Pyq deleted successfully!");
+           fetchPyqs(); // Refresh the list
+         } else {
+           alert("Failed to delete Pyq.");
+         }
+       } catch (error) {
+         console.error("Error:", error);
+       }
+     };
+     const [Pyqs, setPyqs] = useState([]);
+     
+     const fetchPyqs = async () => {
+       try {
+         const response = await fetch("http://localhost:8080/Pyq");
+         const data = await response.json();
+         setPyqs(data);
+       } catch (error) {
+         console.error("Error:", error);
+       }
+     };
+     
+     useEffect(() => {
+       fetchPyqs();
+     }, []);
+     
 
   return (
     <div className="p-6">
@@ -92,12 +187,12 @@ function Pyq() {
           </tr>
         </thead>
         <tbody>
-          {pyqsData.map((pyq, index) => (
+          {Pyqs.map((pyq, index) => (
             <tr key={index} className="border">
               <td className="p-3 border text-center ">{index+1}</td>
               <td className="p-3 border text-center ">{pyq.standard}</td>
               <td className="p-3 border text-center ">{pyq.subjectName}</td>
-              <td className="p-3 border text-center"><a  href={pyq.url}><button className="bg-blue-600 text-white px-3 py-1 rounded w-[50%] ">Download</button></a></td>
+              <td className="p-3 border text-center"><a  href={pyq.pyqUrl}><button className="bg-blue-600 text-white px-3 py-1 rounded w-[50%] ">Download</button></a></td>
               <td className="p-3 border flex gap-2">
                 
                 <button
@@ -106,7 +201,7 @@ function Pyq() {
                 >
                   Edit
                 </button>
-                <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
+                <button  onClick={() => handleDeletePyq(pyq._id)} className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
               </td>
             </tr>
           ))}
@@ -117,23 +212,33 @@ function Pyq() {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-[50%]">
             <h2 className="text-xl font-bold mb-4">Edit Pyq</h2>
-            <form>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdatePyq(); }}>
               <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentPyq.standard}
+                name="standard" 
+                  onChange={handleEditInputChange} 
+                  value={editingPyq?.standard || ''} 
+                  required
+                
                 className="border p-2 w-full mb-4"
               />
               <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentPyq.subjectName}
+                name="subjectName" 
+                onChange={handleEditInputChange} 
+                value={editingPyq?.subjectName || ''} 
+                required
                 className="border p-2 w-full mb-4"
               />
                <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentPyq.url}
+                name="pyqUrl" 
+                onChange={handleEditInputChange} 
+                value={editingPyq?.pyqUrl || ''} 
+                required
                 className="border p-2 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
@@ -144,7 +249,7 @@ function Pyq() {
                 >
                   Cancel
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
               </div>
             </form>
           </div>
@@ -155,23 +260,35 @@ function Pyq() {
          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
          <div className="bg-white p-6 rounded shadow-lg w-[50%]">
            <h2 className="text-xl font-bold mb-4">Add Pyq</h2>
-           <form>
+           <form  onSubmit={(e) => { e.preventDefault(); handleAddPyq(); }}>
              <label className="block mb-2 ">Standard <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="standard" 
+               onChange={handleInputChange} 
+               value={newPyq.standard} 
+               placeholder="Standard" 
+               required
                className="border p-2 w-full mb-4"
              />
              <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="subjectName" 
+               onChange={handleInputChange} 
+               value={newPyq.subjectName} 
+               placeholder="Subject Name" 
+               required
                className="border p-2 w-full mb-4"
              />
               <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="pyqUrl" 
+               onChange={handleInputChange} 
+               value={newPyq.pyqUrl} 
+               placeholder="Url" 
+               required
                className="border p-2 w-full mb-4"
              />
              <div className="flex justify-end gap-2">
@@ -182,7 +299,7 @@ function Pyq() {
                >
                  Cancel
                </button>
-               <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+               <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
              </div>
            </form>
          </div>
