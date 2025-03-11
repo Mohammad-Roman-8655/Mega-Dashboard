@@ -1,60 +1,152 @@
 import React from 'react'
-import { useState } from 'react';
-const TextBooksData = [
-  {
-    standard: "10th",
-    subjectName: "Mathematics",
-    textBookUrl: "https://example.com/textbooks/math-10.pdf"
-  },
-  {
-    standard: "12th",
-    subjectName: "Physics",
-    textBookUrl: "https://example.com/textbooks/physics-12.pdf"
-  },
-  {
-    standard: "9th",
-    subjectName: "English",
-    textBookUrl: "https://example.com/textbooks/english-9.pdf"
-  },
-  {
-    standard: "11th",
-    subjectName: "Chemistry",
-    textBookUrl: "https://example.com/textbooks/chemistry-11.pdf"
-  },
-  {
-    standard: "8th",
-    subjectName: "History",
-    textBookUrl: "https://example.com/textbooks/history-8.pdf"
-  }
-];
+import { useState,useEffect } from 'react';
+// const TextBooksData = [
+//   {
+//     standard: "10th",
+//     subjectName: "Mathematics",
+//     textBookUrl: "https://example.com/textbooks/math-10.pdf"
+//   },
+//   {
+//     standard: "12th",
+//     subjectName: "Physics",
+//     textBookUrl: "https://example.com/textbooks/physics-12.pdf"
+//   },
+//   {
+//     standard: "9th",
+//     subjectName: "English",
+//     textBookUrl: "https://example.com/textbooks/english-9.pdf"
+//   },
+//   {
+//     standard: "11th",
+//     subjectName: "Chemistry",
+//     textBookUrl: "https://example.com/textbooks/chemistry-11.pdf"
+//   },
+//   {
+//     standard: "8th",
+//     subjectName: "History",
+//     textBookUrl: "https://example.com/textbooks/history-8.pdf"
+//   }
+// ];
 function TextBook() {
-
-
-
   const [isAddTextBookModalOpen,setIsAddTextBookModalOpen]=useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTextBook, setCurrentTextBook] = useState(null);
-
-  const openModal = (TextBook) => {
-    setCurrentTextBook(TextBook);
-    setIsModalOpen(true);
-
-  };
-  const openTextBookModal = () => {
+       const [isModalOpen, setIsModalOpen] = useState(false);
+       const [currentTextBook, setCurrentTextBook] = useState(null);
+     
+       const openModal = (TextBook) => {
+        setCurrentTextBook(TextBook);
+        setEditingTextBook(TextBook); // This ensures _id is included
+        setIsModalOpen(true);
+      };
+      
+       const openTextBookModal = () => {
+         
+         setIsAddTextBookModalOpen(true);
+         
+       };
+       const closeTextBookModal = () => {
+         
+         setIsAddTextBookModalOpen(false);
+         
+       };
+     
+       const closeModal = () => {
+         setIsModalOpen(false);
+         setCurrentTextBook(null);
+       };
+       const [newTextBook, setNewTextBook] = useState({
+        standard: "",
+        subjectName: "",
+        textBookUrl: ""
+       
+    });
     
-    setIsAddTextBookModalOpen(true);
+    const handleInputChange = (e) => {
+      setNewTextBook({ ...newTextBook, [e.target.name]: e.target.value });
+    };
     
-  };
-  const closeTextBookModal = () => {
+    const handleAddTextBook = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/TextBook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newTextBook),
+        });
     
-    setIsAddTextBookModalOpen(false);
+        if (response.ok) {
+          alert("TextBook added successfully!");
+          closeTextBookModal();
+          fetchTextBooks(); // Refresh the list
+        } else {
+          alert("Failed to add TextBook.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [editingTextBook, setEditingTextBook] = useState(null);
     
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentTextBook(null);
-  };
+    const handleEditInputChange = (e) => {
+      setEditingTextBook({ ...editingTextBook, [e.target.name]: e.target.value });
+    };
+    
+    
+    const handleUpdateTextBook = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/TextBook/${editingTextBook._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editingTextBook),
+        });
+    
+        if (response.ok) {
+          alert("TextBook updated successfully!");
+          closeModal();
+          fetchTextBooks(); // Refresh the list
+        } else {
+          alert("Failed to update TextBook.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    const handleDeleteTextBook = async (id) => {
+      if (!window.confirm("Are you sure you want to delete this TextBook?")) return;
+    
+      try {
+        const response = await fetch(`http://localhost:8080/TextBook/${id}`, {
+          method: "DELETE",
+        });
+    
+        if (response.ok) {
+          alert("TextBook deleted successfully!");
+          fetchTextBooks(); // Refresh the list
+        } else {
+          alert("Failed to delete TextBook.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [TextBooks, setTextBooks] = useState([]);
+    
+    const fetchTextBooks = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/TextBook");
+        const data = await response.json();
+        setTextBooks(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    useEffect(() => {
+      fetchTextBooks();
+    }, []);
 
   return (
     <div className="p-6">
@@ -100,7 +192,7 @@ function TextBook() {
           </tr>
         </thead>
         <tbody>
-          {TextBooksData.map((TextBook, index) => (
+          {TextBooks.map((TextBook, index) => (
             <tr key={index} className="border">
               <td className="p-3 border text-center ">{index+1}</td>
               <td className="p-3 border text-center ">{TextBook.standard}</td>
@@ -114,7 +206,7 @@ function TextBook() {
                 >
                   Edit
                 </button>
-                <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
+                <button onClick={() => handleDeleteTextBook(TextBook._id)} className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
               </td>
             </tr>
           ))}
@@ -125,23 +217,32 @@ function TextBook() {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-[50%]">
             <h2 className="text-xl font-bold mb-4">Edit TextBook</h2>
-            <form>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateTextBook(); }}>
               <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentTextBook.standard}
+                name="standard" 
+                onChange={handleEditInputChange} 
+                value={editingTextBook?.standard || ''} 
+                required
                 className="border p-2 w-full mb-4"
               />
               <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentTextBook.subjectName}
+                name="subjectName" 
+                onChange={handleEditInputChange} 
+                value={editingTextBook?.subjectName || ''} 
+                required
                 className="border p-2 w-full mb-4"
               />
                <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentTextBook.textBookUrl}
+                name="textBookUrl" 
+                onChange={handleEditInputChange} 
+                value={editingTextBook?.textBookUrl || ''} 
+                required
                 className="border p-2 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
@@ -152,7 +253,7 @@ function TextBook() {
                 >
                   Cancel
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
               </div>
             </form>
           </div>
@@ -163,23 +264,35 @@ function TextBook() {
          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
          <div className="bg-white p-6 rounded shadow-lg w-[50%]">
            <h2 className="text-xl font-bold mb-4">Add TextBook</h2>
-           <form>
+           <form onSubmit={(e) => { e.preventDefault(); handleAddTextBook(); }}>
              <label className="block mb-2 ">Standard <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="standard" 
+               onChange={handleInputChange} 
+               value={newTextBook.standard} 
+               placeholder="Standard" 
+               required
                className="border p-2 w-full mb-4"
              />
              <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="subjectName" 
+               onChange={handleInputChange} 
+               value={newTextBook.subjectName} 
+               placeholder="Subject Name" 
+               required
                className="border p-2 w-full mb-4"
              />
               <label className="block mb-2">Url <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="textBookUrl" 
+               onChange={handleInputChange} 
+               value={newTextBook.textBookUrl} 
+               placeholder="Text Book Url" 
+               required
                className="border p-2 w-full mb-4"
              />
              <div className="flex justify-end gap-2">
@@ -190,7 +303,7 @@ function TextBook() {
                >
                  Cancel
                </button>
-               <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+               <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
              </div>
            </form>
          </div>

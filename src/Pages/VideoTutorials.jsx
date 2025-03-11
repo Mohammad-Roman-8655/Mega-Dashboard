@@ -1,66 +1,161 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
-const VideoTutorialsData = [
-  {
-    standard: "10th",
-    subjectName: "Mathematics",
-    chapter: "Algebra",
-    vedioUrl: "https://example.com/videos/math-algebra.mp4"
-  },
-  {
-    standard: "12th",
-    subjectName: "Physics",
-    chapter: "Electromagnetism",
-    vedioUrl: "https://example.com/videos/physics-electromagnetism.mp4"
-  },
-  {
-    standard: "9th",
-    subjectName: "Biology",
-    chapter: "Cell Structure",
-    vedioUrl: "https://example.com/videos/biology-cell-structure.mp4"
-  },
-  {
-    standard: "11th",
-    subjectName: "Chemistry",
-    chapter: "Organic Chemistry",
-    vedioUrl: "https://example.com/videos/chemistry-organic.mp4"
-  },
-  {
-    standard: "8th",
-    subjectName: "History",
-    chapter: "French Revolution",
-    vedioUrl: "https://example.com/videos/history-french-revolution.mp4"
-  }
-];
+// const VideoTutorialsData = [
+//   {
+//     standard: "10th",
+//     subjectName: "Mathematics",
+//     chapter: "Algebra",
+//     vedioUrl: "https://example.com/videos/math-algebra.mp4"
+//   },
+//   {
+//     standard: "12th",
+//     subjectName: "Physics",
+//     chapter: "Electromagnetism",
+//     vedioUrl: "https://example.com/videos/physics-electromagnetism.mp4"
+//   },
+//   {
+//     standard: "9th",
+//     subjectName: "Biology",
+//     chapter: "Cell Structure",
+//     vedioUrl: "https://example.com/videos/biology-cell-structure.mp4"
+//   },
+//   {
+//     standard: "11th",
+//     subjectName: "Chemistry",
+//     chapter: "Organic Chemistry",
+//     vedioUrl: "https://example.com/videos/chemistry-organic.mp4"
+//   },
+//   {
+//     standard: "8th",
+//     subjectName: "History",
+//     chapter: "French Revolution",
+//     vedioUrl: "https://example.com/videos/history-french-revolution.mp4"
+//   }
+// ];
 function VideoTutorials() {
  
-  
+ const [isAddVideoTutorialModalOpen,setIsAddVideoTutorialModalOpen]=useState(false);
+       const [isModalOpen, setIsModalOpen] = useState(false);
+       const [currentVideoTutorial, setCurrentVideoTutorial] = useState(null);
+     
+       const openModal = (VideoTutorial) => {
+        setCurrentVideoTutorial(VideoTutorial);
+        setEditingVideoTutorial(VideoTutorial); // This ensures _id is included
+        setIsModalOpen(true);
+      };
+      
+       const openVideoTutorialModal = () => {
+         
+         setIsAddVideoTutorialModalOpen(true);
+         
+       };
+       const closeVideoTutorialModal = () => {
+         
+         setIsAddVideoTutorialModalOpen(false);
+         
+       };
+     
+       const closeModal = () => {
+         setIsModalOpen(false);
+         setCurrentVideoTutorial(null);
+       };
+       const [newVideoTutorial, setNewVideoTutorial] = useState({
+              standard: "",
+             subjectName: "",
+             chapter: "",
+             vedioUrl: ""
+       
+    });
+    
+    const handleInputChange = (e) => {
+      setNewVideoTutorial({ ...newVideoTutorial, [e.target.name]: e.target.value });
+    };
+    
+    const handleAddVideoTutorial = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/VideoTutorial", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newVideoTutorial),
+        });
+    
+        if (response.ok) {
+          alert("VideoTutorial added successfully!");
+          closeVideoTutorialModal();
+          fetchVideoTutorials(); // Refresh the list
+        } else {
+          alert("Failed to add VideoTutorial.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [editingVideoTutorial, setEditingVideoTutorial] = useState(null);
+    
+    const handleEditInputChange = (e) => {
+      setEditingVideoTutorial({ ...editingVideoTutorial, [e.target.name]: e.target.value });
+    };
+    
+    
+    const handleUpdateVideoTutorial = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/VideoTutorial/${editingVideoTutorial._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editingVideoTutorial),
+        });
+    
+        if (response.ok) {
+          alert("VideoTutorial updated successfully!");
+          closeModal();
+          fetchVideoTutorials(); // Refresh the list
+        } else {
+          alert("Failed to update VideoTutorial.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    const handleDeleteVideoTutorial = async (id) => {
+      if (!window.confirm("Are you sure you want to delete this VideoTutorial?")) return;
+    
+      try {
+        const response = await fetch(`http://localhost:8080/VideoTutorial/${id}`, {
+          method: "DELETE",
+        });
+    
+        if (response.ok) {
+          alert("VideoTutorial deleted successfully!");
+          fetchVideoTutorials(); // Refresh the list
+        } else {
+          alert("Failed to delete VideoTutorial.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [VideoTutorials, setVideoTutorials] = useState([]);
+    
+    const fetchVideoTutorials = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/VideoTutorial");
+        const data = await response.json();
+        setVideoTutorials(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    useEffect(() => {
+      fetchVideoTutorials();
+    }, []);
 
-    const [isAddVideoTutorialModalOpen,setIsAddVideoTutorialModalOpen]=useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentVideoTutorial, setCurrentVideoTutorial] = useState(null);
-  
-    const openModal = (VideoTutorial) => {
-      setCurrentVideoTutorial(VideoTutorial);
-      setIsModalOpen(true);
-  
-    };
-    const openVideoTutorialModal = () => {
-      
-      setIsAddVideoTutorialModalOpen(true);
-      
-    };
-    const closeVideoTutorialModal = () => {
-      
-      setIsAddVideoTutorialModalOpen(false);
-      
-    };
-  
-    const closeModal = () => {
-      setIsModalOpen(false);
-      setCurrentVideoTutorial(null);
-    };
   
     return (
       <div className="p-6">
@@ -121,7 +216,7 @@ function VideoTutorials() {
             </tr>
           </thead>
           <tbody>
-            {VideoTutorialsData.map((VideoTutorial, index) => (
+            {VideoTutorials.map((VideoTutorial, index) => (
               <tr key={index} className="border">
                 <td className="p-3 border text-center ">{index+1}</td>
                 <td className="p-3 border text-center ">{VideoTutorial.standard}</td>
@@ -136,7 +231,7 @@ function VideoTutorials() {
                   >
                     Edit
                   </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
+                  <button onClick={() => handleDeleteVideoTutorial(VideoTutorial._id)} className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
                 </td>
               </tr>
             ))}
@@ -147,29 +242,41 @@ function VideoTutorials() {
           <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg w-[50%]">
               <h2 className="text-xl font-bold mb-4">Edit VideoTutorial</h2>
-              <form>
+              <form onSubmit={(e) => { e.preventDefault(); handleUpdateVideoTutorial(); }}>
                 <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentVideoTutorial.standard}
+                  name="standard" 
+                   onChange={handleEditInputChange} 
+                  value={editingVideoTutorial?.standard || ''} 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                 <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentVideoTutorial.subjectName}
+                  name="subjectName" 
+                  onChange={handleEditInputChange} 
+                 value={editingVideoTutorial?.subjectName || ''} 
+                 required
                   className="border p-2 w-full mb-4"
                 />
                  <label className="block mb-2">Chapter Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentVideoTutorial.chapter}
+                  name="chapter" 
+                  onChange={handleEditInputChange} 
+                 value={editingVideoTutorial?.chapter || ''} 
+                 required
                   className="border p-2 w-full mb-4"
                 />
                  <label className="block mb-2">Video Link <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                  defaultValue={currentVideoTutorial.vedioUrl}
+                  name="vedioUrl" 
+                  onChange={handleEditInputChange} 
+                 value={editingVideoTutorial?.vedioUrl || ''} 
+                 required
                   className="border p-2 w-full mb-4"
                 />
                 <div className="flex justify-end gap-2">
@@ -180,7 +287,7 @@ function VideoTutorials() {
                   >
                     Cancel
                   </button>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
                 </div>
               </form>
             </div>
@@ -191,29 +298,45 @@ function VideoTutorials() {
            <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
            <div className="bg-white p-6 rounded shadow-lg w-[50%]">
              <h2 className="text-xl font-bold mb-4">Add VideoTutorial</h2>
-             <form>
+             <form onSubmit={(e) => { e.preventDefault(); handleAddVideoTutorial(); }}>
                <label className="block mb-2 ">Standard <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                 
+                 name="standard" 
+               onChange={handleInputChange} 
+               value={newVideoTutorial.standard} 
+               placeholder="Standard" 
+               required
                  className="border p-2 w-full mb-4"
                />
                <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
-                 
+                 name="subjectName" 
+                 onChange={handleInputChange} 
+                 value={newVideoTutorial.subjectName} 
+                 placeholder="Subject Name" 
+                 required
                  className="border p-2 w-full mb-4"
                />
                <label className="block mb-2">Chapter Name <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                 
+                  name="chapter" 
+                  onChange={handleInputChange} 
+                  value={newVideoTutorial.chapter} 
+                  placeholder="Chapter Name" 
+                  required
                   className="border p-2 w-full mb-4"
                 />
                  <label className="block mb-2">Video Link <span className='text-red-700 font-semibold'>*</span></label>
                 <input
                   type="text"
-                
+                  name="vedioUrl" 
+                 onChange={handleInputChange} 
+                 value={newVideoTutorial.vedioUrl} 
+                 placeholder="Video Url" 
+                 required
                   className="border p-2 w-full mb-4"
                 />
                <div className="flex justify-end gap-2">
@@ -224,7 +347,7 @@ function VideoTutorials() {
                  >
                    Cancel
                  </button>
-                 <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                 <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
                </div>
              </form>
            </div>

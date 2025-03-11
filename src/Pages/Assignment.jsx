@@ -1,67 +1,162 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
-const AssignmentsData = [
+// const AssignmentsData = [
   
-    {
-      standard: "10th",
-      subjectName: "Mathematics",
-      subjectAssignmentSummerUrl: "https://example.com/assignments/math-summer-10.pdf",
-      subjectAssignmentWinterUrl: "https://example.com/assignments/math-winter-10.pdf"
-    },
-    {
-      standard: "12th",
-      subjectName: "Physics",
-      subjectAssignmentSummerUrl: "https://example.com/assignments/physics-summer-12.pdf",
-      subjectAssignmentWinterUrl: "https://example.com/assignments/physics-winter-12.pdf"
-    },
-    {
-      standard: "9th",
-      subjectName: "English",
-      subjectAssignmentSummerUrl: "https://example.com/assignments/english-summer-9.pdf",
-      subjectAssignmentWinterUrl: "https://example.com/assignments/english-winter-9.pdf"
-    },
-    {
-      standard: "11th",
-      subjectName: "Chemistry",
-      subjectAssignmentSummerUrl: "https://example.com/assignments/chemistry-summer-11.pdf",
-      subjectAssignmentWinterUrl: "https://example.com/assignments/chemistry-winter-11.pdf"
-    },
-    {
-      standard: "8th",
-      subjectName: "History",
-      subjectAssignmentSummerUrl: "https://example.com/assignments/history-summer-8.pdf",
-      subjectAssignmentWinterUrl: "https://example.com/assignments/history-winter-8.pdf"
-    }
-];
+//     {
+//       standard: "10th",
+//       subjectName: "Mathematics",
+//       subjectAssignmentSummerUrl: "https://example.com/assignments/math-summer-10.pdf",
+//       subjectAssignmentWinterUrl: "https://example.com/assignments/math-winter-10.pdf"
+//     },
+//     {
+//       standard: "12th",
+//       subjectName: "Physics",
+//       subjectAssignmentSummerUrl: "https://example.com/assignments/physics-summer-12.pdf",
+//       subjectAssignmentWinterUrl: "https://example.com/assignments/physics-winter-12.pdf"
+//     },
+//     {
+//       standard: "9th",
+//       subjectName: "English",
+//       subjectAssignmentSummerUrl: "https://example.com/assignments/english-summer-9.pdf",
+//       subjectAssignmentWinterUrl: "https://example.com/assignments/english-winter-9.pdf"
+//     },
+//     {
+//       standard: "11th",
+//       subjectName: "Chemistry",
+//       subjectAssignmentSummerUrl: "https://example.com/assignments/chemistry-summer-11.pdf",
+//       subjectAssignmentWinterUrl: "https://example.com/assignments/chemistry-winter-11.pdf"
+//     },
+//     {
+//       standard: "8th",
+//       subjectName: "History",
+//       subjectAssignmentSummerUrl: "https://example.com/assignments/history-summer-8.pdf",
+//       subjectAssignmentWinterUrl: "https://example.com/assignments/history-winter-8.pdf"
+//     }
+// ];
 function Assignment() {
 
 
-
-  const [isAddAssignmentModalOpen,setIsAddAssignmentModalOpen]=useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentAssignment, setCurrentAssignment] = useState(null);
-
-  const openModal = (Assignment) => {
-    setCurrentAssignment(Assignment);
-    setIsModalOpen(true);
-
-  };
-  const openAssignmentModal = () => {
+const [isAddAssignmentModalOpen,setIsAddAssignmentModalOpen]=useState(false);
+       const [isModalOpen, setIsModalOpen] = useState(false);
+       const [currentAssignment, setCurrentAssignment] = useState(null);
+     
+       const openModal = (Assignment) => {
+        setCurrentAssignment(Assignment);
+        setEditingAssignment(Assignment); // This ensures _id is included
+        setIsModalOpen(true);
+      };
+      
+       const openAssignmentModal = () => {
+         
+         setIsAddAssignmentModalOpen(true);
+         
+       };
+       const closeAssignmentModal = () => {
+         
+         setIsAddAssignmentModalOpen(false);
+         
+       };
+     
+       const closeModal = () => {
+         setIsModalOpen(false);
+         setCurrentAssignment(null);
+       };
+       const [newAssignment, setNewAssignment] = useState({
+         standard: "",
+         subjectName: "",
+         chapter: "",
+         notesUrl: ""
+       
+    });
     
-    setIsAddAssignmentModalOpen(true);
+    const handleInputChange = (e) => {
+      setNewAssignment({ ...newAssignment, [e.target.name]: e.target.value });
+    };
     
-  };
-  const closeAssignmentModal = () => {
+    const handleAddAssignment = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/Assignment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newAssignment),
+        });
     
-    setIsAddAssignmentModalOpen(false);
+        if (response.ok) {
+          alert("Assignment added successfully!");
+          closeAssignmentModal();
+          fetchAssignments(); // Refresh the list
+        } else {
+          alert("Failed to add Assignment.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [editingAssignment, setEditingAssignment] = useState(null);
     
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setCurrentAssignment(null);
-  };
+    const handleEditInputChange = (e) => {
+      setEditingAssignment({ ...editingAssignment, [e.target.name]: e.target.value });
+    };
+    
+    
+    const handleUpdateAssignment = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/Assignment/${editingAssignment._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editingAssignment),
+        });
+    
+        if (response.ok) {
+          alert("Assignment updated successfully!");
+          closeModal();
+          fetchAssignments(); // Refresh the list
+        } else {
+          alert("Failed to update Assignment.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    const handleDeleteAssignment = async (id) => {
+      if (!window.confirm("Are you sure you want to delete this Assignment?")) return;
+    
+      try {
+        const response = await fetch(`http://localhost:8080/Assignment/${id}`, {
+          method: "DELETE",
+        });
+    
+        if (response.ok) {
+          alert("Assignment deleted successfully!");
+          fetchAssignments(); // Refresh the list
+        } else {
+          alert("Failed to delete Assignment.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const [Assignments, setAssignments] = useState([]);
+    
+    const fetchAssignments = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/Assignment");
+        const data = await response.json();
+        setAssignments(data);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    
+    useEffect(() => {
+      fetchAssignments();
+    }, []);
 
   return (
     <div className="p-6">
@@ -108,7 +203,7 @@ function Assignment() {
           </tr>
         </thead>
         <tbody>
-          {AssignmentsData.map((Assignment, index) => (
+          {Assignments.map((Assignment, index) => (
             <tr key={index} className="border">
               <td className="p-3 border text-center ">{index+1}</td>
               <td className="p-3 border text-center ">{Assignment.standard}</td>
@@ -123,7 +218,7 @@ function Assignment() {
                 >
                   Edit
                 </button>
-                <button className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
+                <button onClick={() => handleDeleteAssignment(Assignment._id)} className="bg-red-500 text-white px-3 py-1 rounded w-[50%]">Delete</button>
               </td>
             </tr>
           ))}
@@ -134,29 +229,41 @@ function Assignment() {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-[50%]">
             <h2 className="text-xl font-bold mb-4">Edit Assignment</h2>
-            <form>
+            <form onSubmit={(e) => { e.preventDefault(); handleUpdateAssignment(); }}>
               <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentAssignment.standard}
+                name="standard" 
+                  onChange={handleEditInputChange} 
+                  value={editingAssignment?.standard || ''} 
+                  required
                 className="border p-2 w-full mb-4"
               />
               <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentAssignment.subjectName}
+                name="subjectName" 
+                  onChange={handleEditInputChange} 
+                  value={editingAssignment?.subjectName || ''} 
+                  required
                 className="border p-2 w-full mb-4"
               />
                <label className="block mb-2">Summer Assignment Url <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentAssignment.subjectAssignmentSummerUrl}
+                name="subjectAssignmentSummerUrl" 
+                  onChange={handleEditInputChange} 
+                  value={editingAssignment?.subjectAssignmentSummerUrl || ''} 
+                  required
                 className="border p-2 w-full mb-4"
               />
               <label className="block mb-2">Winter Assignment Url <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-                defaultValue={currentAssignment.subjectAssignmentWinterUrl}
+                name="subjectAssignmentWinterUrl" 
+                onChange={handleEditInputChange} 
+                value={editingAssignment?.subjectAssignmentWinterUrl || ''} 
+                required
                 className="border p-2 w-full mb-4"
               />
               <div className="flex justify-end gap-2">
@@ -167,7 +274,7 @@ function Assignment() {
                 >
                   Cancel
                 </button>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+                <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
               </div>
             </form>
           </div>
@@ -178,29 +285,45 @@ function Assignment() {
          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
          <div className="bg-white p-6 rounded shadow-lg w-[50%]">
            <h2 className="text-xl font-bold mb-4">Add Assignment</h2>
-           <form>
+           <form onSubmit={(e) => { e.preventDefault(); handleAddAssignment(); }}>
              <label className="block mb-2 ">Standard <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="standard" 
+               onChange={handleInputChange} 
+               value={newAssignment.standard} 
+               placeholder="Standard" 
+               required
                className="border p-2 w-full mb-4"
              />
              <label className="block mb-2">Subject Name <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="subjectName" 
+               onChange={handleInputChange} 
+               value={newAssignment.subjectName} 
+               placeholder="Subject Name" 
+               required
                className="border p-2 w-full mb-4"
              />
               <label className="block mb-2">Summer Assignment Url <span className='text-red-700 font-semibold'>*</span></label>
              <input
                type="text"
-               
+               name="subjectAssignmentSummerUrl" 
+               onChange={handleInputChange} 
+               value={newAssignment.subjectAssignmentSummerUrl} 
+               placeholder="Summer Assignment Url" 
+               required
                className="border p-2 w-full mb-4"
              />
               <label className="block mb-2">Winter Assignment Url <span className='text-red-700 font-semibold'>*</span></label>
               <input
                 type="text"
-               
+                name="subjectAssignmentWinterUrl" 
+                onChange={handleInputChange} 
+                value={newAssignment.subjectAssignmentWinterUrl} 
+                placeholder="Winter Assignment Url" 
+                required
                 className="border p-2 w-full mb-4"
               />
              <div className="flex justify-end gap-2">
@@ -211,7 +334,7 @@ function Assignment() {
                >
                  Cancel
                </button>
-               <button className="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+               <button className="bg-blue-500 text-white px-4 py-2 rounded" type="submit">Save</button>
              </div>
            </form>
          </div>
