@@ -1,7 +1,7 @@
 import React from 'react'
-import { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link, NavLink } from "react-router-dom";
-import { FaChevronDown } from "react-icons/fa";
+
+import { BrowserRouter as Router, Route, Routes,  NavLink } from "react-router-dom";
+
 
 import Home from './Home';
 import Manager from '../Pages/Manager';
@@ -19,29 +19,13 @@ import ImageCarousel from '../Pages/ImageCarousel';
 import User from '../Pages/User';
 import AcademicCalender from '../Pages/AcademicCalender';
 
-const menuItems = [
-    "Manager",
-    "Teacher",
-    "Student",
-    "Notice Board",
-    "PYQS",
-    "Mock Paper",
-    "Study Notes",
-    "Text Book",
-    "Syllabus",
-    "Assignment",
-    "Video Tutorials",
-    "Academic Calendar",
-    "Image Carousel",
-    "User",
-  
-];
+
 
 function Sidebar() {
 
 
   return (
-    <div className="  w-64 bg-gray-800 text-white h-auto p-4">
+    <div className="  w-80 bg-gray-800 text-white h-auto p-4 ">
      <div className="flex items-center gap-3 w-[100%] mb-5 ">
         <img
           className="h-8 w-8"
@@ -76,9 +60,10 @@ function Sidebar() {
 
 
 function Dashboard() {
+  
   return (
     <Router>
-      <div className="flex">
+      <div className="flex ">
         <Sidebar />
         <div className="flex-1 p-4 ">
           <Routes>

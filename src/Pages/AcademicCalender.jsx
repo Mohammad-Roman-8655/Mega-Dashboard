@@ -174,7 +174,7 @@ function AcademicCalender() {
                 <td className="p-3 border text-center ">{index+1}</td>
                 <td className="p-3 border text-center ">{AcademicCalender.eventName}</td>
                 <td className="p-3 border text-center ">{AcademicCalender.dayName}</td>
-                <td className="p-3 border text-center ">{AcademicCalender.date}</td>
+                <td className="p-3 border text-center ">{new Date(AcademicCalender.date).toLocaleDateString("en-GB")}</td>
                 
                 <td className="p-3 border flex gap-2">
                   

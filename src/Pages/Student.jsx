@@ -1,42 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react';
-// const StudentsData = [
-//   {
-//     standard: "10th",
-//     studentName: "Aarav Sharma",
-//     photo: "https://randomuser.me/api/portraits/men/15.jpg",
-//     division: "A",
-//     address: "123, MG Road, Mumbai, India"
-//   },
-//   {
-//     standard: "9th",
-//     studentName: "Pooja Verma",
-//     photo: "https://randomuser.me/api/portraits/women/20.jpg",
-//     division: "B",
-//     address: "56, Park Avenue, Delhi, India"
-//   },
-//   {
-//     standard: "8th",
-//     studentName: "Rahul Mehta",
-//     photo: "https://randomuser.me/api/portraits/men/30.jpg",
-//     division: "C",
-//     address: "78, Lake View Road, Bengaluru, India"
-//   },
-//   {
-//     standard: "12th",
-//     studentName: "Sneha Kapoor",
-//     photo: "https://randomuser.me/api/portraits/women/35.jpg",
-//     division: "A",
-//     address: "90, Green Valley, Kolkata, India"
-//   },
-//   {
-//     standard: "11th",
-//     studentName: "Vikram Singh",
-//     photo: "https://randomuser.me/api/portraits/men/45.jpg",
-//     division: "B",
-//     address: "34, Central Plaza, Pune, India"
-//   }
-// ];
+
 function Student() {
 
   const [isAddStudentModalOpen,setIsAddStudentModalOpen]=useState(false);
@@ -65,7 +29,7 @@ function Student() {
        setCurrentStudent(null);
      };
      const [newStudent, setNewStudent] = useState({
-          standard: "8th",
+          standard: "",
           studentName: "",
           photo: "",
           division: "",
@@ -145,21 +109,31 @@ function Student() {
     }
   };
   const [Students, setStudents] = useState([]);
-  
-  const fetchStudents = async () => {
+  const [selectedStandard, setSelectedStandard] = useState(""); // State to store selected class
+
+  // Fetch students with optional filtering by standard
+  const fetchStudents = async (standard = "") => {
     try {
-      const response = await fetch("http://localhost:8080/Student");
+      const url = standard
+        ? `http://localhost:8080/Student?standard=${standard}`
+        : "http://localhost:8080/Student";
+      const response = await fetch(url);
       const data = await response.json();
       setStudents(data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
+
+  // Fetch all students on component mount
   useEffect(() => {
     fetchStudents();
   }, []);
-  
+
+  // Handle class selection change
+  const handleStandardChange = (e) => {
+    setSelectedStandard(e.target.value);
+  };
    
  
    return (
@@ -167,31 +141,30 @@ function Student() {
        <h1 className="text-2xl font-bold mb-15 text-center ">Students Management</h1>
        <div className='flex justify-around items-end mb-5 '>
        <div className="Standards lg:w-[40%] md:w-[90%] sm:w-[90%] w-[90%]  flex flex-col ">
-                   <label for="Standards" className='font-semibold mb-2'>Select Class<span className='text-red-600 font-bold'>*</span></label>
+                   <label htmlFor="Standards" className='font-semibold mb-2'>Select Class<span className='text-red-600 font-bold'>*</span></label>
  
-                   <select id="Standards" className='border-2  h-10 rounded-md '>
+                   <select id="Standards" name="standard"  className='border-2  h-10 rounded-md '  value={selectedStandard} onChange={handleStandardChange}>
                       <option value="Standards" className='p-2'>Select Class </option>
                       <option value="Pre-Nursery">Pre-Nursery</option>
                       <option value="Nursery">Nursery</option>
                       <option value="LKG">LKG</option>
                       <option value="UKG">UKG</option>
-                      <option value="1">1st</option>
-                      <option value="2">2nd</option>
-                      <option value="3">3rd</option>
-                      <option value="4">4th</option>
-                      <option value="5">5th</option>
-                      <option value="6">6th</option>
-                      <option value="7">7th</option>
-                      <option value="8">8th</option>
-                      <option value="9">9th</option>
-                      <option value="10">10th</option>
-                      <option value="11">11th</option>
-                      <option value="12">12th</option>
+                      <option value="1st">1st</option>
+                      <option value="2nd">2nd</option>
+                      <option value="3rd">3rd</option>
+                      <option value="4th">4th</option>
+                      <option value="5th">5th</option>
+                      <option value="6st">6th</option>
+                      <option value="7th">7th</option>
+                      <option value="8th">8th</option>
+                      <option value="9th">9th</option>
+                      <option value="10th">10th</option>
+                      <option value="11th">11th</option>
+                      <option value="12th">12th</option>
                    </select>
        </div> 
-      
-       <button className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
-    
+       <button  onClick={() => fetchStudents(selectedStandard)} className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
+       <button  onClick={() => fetchStudents('')} className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-semibold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Remove Filter</button>
        </div>
        <button className="bg-blue-800 text-white px-3 py-1 rounded mt-10 mb-5 font-semibold   " onClick={openStudentModal}>Add Student</button>
        <table className="min-w-full bg-white border border-gray-300">
@@ -236,27 +209,30 @@ function Student() {
            <div className="bg-white p-6 rounded shadow-lg w-[50%]">
              <h2 className="text-xl font-bold mb-4">Edit Student</h2>
              <form onSubmit={(e) => { e.preventDefault(); handleUpdateStudent(); }}>
-               <label className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
+               <label htmlFor="standard" className="block mb-2">Standard <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
+                 id="standard"
                  name="standard" 
                  onChange={handleEditInputChange} 
                  value={editingStudent?.standard || ''} 
                  required
                  className="border p-2 w-full mb-4"
                />
-               <label className="block mb-2">Student Name <span className='text-red-700 font-semibold'>*</span></label>
+               <label htmlFor="studentName" className="block mb-2">Student Name <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
+                 id="studentName"
                  name="studentName" 
                  onChange={handleEditInputChange} 
                  value={editingStudent?.studentName || ''} 
                  required
                  className="border p-2 w-full mb-4"
                />
-                <label className="block mb-2">Division <span className='text-red-700 font-semibold'>*</span></label>
+                <label htmlFor="division" className="block mb-2">Division <span className='text-red-700 font-semibold'>*</span></label>
                <input
                  type="text"
+                 id="division"
                  name="division" 
                  onChange={handleEditInputChange} 
                  value={editingStudent?.division || ''} 

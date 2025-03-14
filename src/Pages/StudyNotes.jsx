@@ -143,53 +143,69 @@ function StudyNotes() {
       }
     };
     const [StudyNotes, setStudyNotes] = useState([]);
-    
-    const fetchStudyNotes = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/StudyNotes");
-        const data = await response.json();
-        setStudyNotes(data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    
-    useEffect(() => {
-      fetchStudyNotes();
-    }, []);
    
+          const [selectedStandard, setSelectedStandard] = useState(""); // State to store selected class
+          const [selectedSubject, setSelectedSubject] = useState(""); // State to store selected class
+       
+            // Fetch students with optional filtering by standard
+            const fetchStudyNotes = async (standard = "", subjectName = "") => {
+              try {
+                const url = (standard && subjectName)
+                  ? `http://localhost:8080/StudyNotes?standard=${standard}&subjectName=${subjectName}`
+                  : "http://localhost:8080/StudyNotes";
+                const response = await fetch(url);
+                const data = await response.json();
+                setStudyNotes(data);
+              } catch (error) {
+                console.error("Error:", error);
+              }
+            };
+          
+            // Fetch all students on component mount
+            useEffect(() => {
+              fetchStudyNotes();
+            }, []);
+          
+            // Handle class selection change
+            const handleStandardChange = (e) => {
+              setSelectedStandard(e.target.value);
+            };
+            const handleSubjectChange = (e) => {
+              setSelectedSubject(e.target.value);
+            };
+
     return (
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-15 text-center ">Study Notes Management</h1>
-        <div className='flex justify-around items-end mb-5 '>
+        <div className='flex  items-end mb-5 gap-5 '>
         <div className="Standards lg:w-[30%] md:w-[30%] sm:w-[30%] w-[30%]  flex flex-col ">
-                    <label for="Standards" className='font-semibold mb-2'>Select Class<span className='text-red-600 font-bold'>*</span></label>
+                    <label htmlFor="Standards" className='font-semibold mb-2'>Select Class<span className='text-red-600 font-bold'>*</span></label>
   
-                    <select id="Standards" className='border-2  h-10 rounded-md '>
-                       <option value="Standards" className='p-2'>Select Class </option>
-                       <option value="Pre-Nursery">Pre-Nursery</option>
-                       <option value="Nursery">Nursery</option>
-                       <option value="LKG">LKG</option>
-                       <option value="UKG">UKG</option>
-                       <option value="1">1st</option>
-                       <option value="2">2nd</option>
-                       <option value="3">3rd</option>
-                       <option value="4">4th</option>
-                       <option value="5">5th</option>
-                       <option value="6">6th</option>
-                       <option value="7">7th</option>
-                       <option value="8">8th</option>
-                       <option value="9">9th</option>
-                       <option value="10">10th</option>
-                       <option value="11">11th</option>
-                       <option value="12">12th</option>
+                    <select id="Standards" className='border-2  h-10 rounded-md ' value={selectedStandard} onChange={handleStandardChange}>
+                    <option value="" className='p-2'>Select Class </option>
+                      <option value="Pre-Nursery">Pre-Nursery</option>
+                      <option value="Nursery">Nursery</option>
+                      <option value="LKG">LKG</option>
+                      <option value="UKG">UKG</option>
+                      <option value="1st">1st</option>
+                      <option value="2nd">2nd</option>
+                      <option value="3rd">3rd</option>
+                      <option value="4th">4th</option>
+                      <option value="5th">5th</option>
+                      <option value="6st">6th</option>
+                      <option value="7th">7th</option>
+                      <option value="8th">8th</option>
+                      <option value="9th">9th</option>
+                      <option value="10th">10th</option>
+                      <option value="11th">11th</option>
+                      <option value="12th">12th</option>
                     </select>
         </div> 
         <div className="Subject lg:w-[30%] md:w-[30%] sm:w-[30%] w-[30%]  flex flex-col">
-                        <label for="Subject" className='font-semibold mb-2'>Select Subject<span className='text-red-600 font-bold'>*</span></label>
+                        <label htmlFor="subjectName" className='font-semibold mb-2'>Select Subject<span className='text-red-600 font-bold'>*</span></label>
 
-                        <select id="Subject" className='border-2  h-10 rounded-md '>
-                           <option value="Subject" className='p-2'>Select Subject</option>
+                        <select id="subjectName" className='border-2  h-10 rounded-md ' value={selectedSubject} onChange={handleSubjectChange}>
+                           <option value="" className='p-2'>Select Subject</option>
                            <option value="Hindi">Hindi</option>
                            <option value="English">English</option>
                            <option value="Mathematics">Mathematics</option>
@@ -200,8 +216,8 @@ function StudyNotes() {
                         </select>
               </div>
        
-        <button className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
-     
+        <button  onClick={() => {fetchStudyNotes(selectedStandard,selectedSubject)}} className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
+        <button  onClick={() => {fetchStudyNotes('','')}} className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Remove Filter</button>
         </div>
         <button className="bg-blue-800 text-white px-3 py-1 rounded mt-10 mb-5 font-semibold   " onClick={openStudyNoteModal}>Add Study Note</button>
         <table className="min-w-full bg-white border border-gray-300">

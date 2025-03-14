@@ -133,52 +133,63 @@ function Syllabus() {
       }
     };
     const [Syllabuses, setSyllabuses] = useState([]);
-    
-    const fetchSyllabuses = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/Syllabus");
-        const data = await response.json();
-        setSyllabuses(data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    
-    useEffect(() => {
-      fetchSyllabuses();
-    }, []);
-
+      const [selectedStandard, setSelectedStandard] = useState(""); // State to store selected class
+   
+        // Fetch students with optional filtering by standard
+        const fetchSyllabuses = async (standard = "") => {
+          try {
+            const url = standard
+              ? `http://localhost:8080/Syllabus?standard=${standard}`
+              : "http://localhost:8080/Syllabus";
+            const response = await fetch(url);
+            const data = await response.json();
+            setSyllabuses(data);
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        };
+      
+        // Fetch all students on component mount
+        useEffect(() => {
+          fetchSyllabuses();
+        }, []);
+      
+        // Handle class selection change
+        const handleStandardChange = (e) => {
+          setSelectedStandard(e.target.value);
+        };
+         
   
     return (
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-15 text-center ">Syllabus Management</h1>
         <div className='flex justify-around items-end mb-5 '>
         <div className="Standards lg:w-[40%] md:w-[90%] sm:w-[90%] w-[90%]  flex flex-col ">
-                    <label for="Standards" className='font-semibold mb-2'>Select Class<span className='text-red-600 font-bold'>*</span></label>
+                    <label htmlFor="Standards" className='font-semibold mb-2'  >Select Class<span className='text-red-600 font-bold'>*</span></label>
   
-                    <select id="Standards" className='border-2  h-10 rounded-md '>
-                       <option value="Standards" className='p-2'>Select Class </option>
-                       <option value="Pre-Nursery">Pre-Nursery</option>
-                       <option value="Nursery">Nursery</option>
-                       <option value="LKG">LKG</option>
-                       <option value="UKG">UKG</option>
-                       <option value="1">1st</option>
-                       <option value="2">2nd</option>
-                       <option value="3">3rd</option>
-                       <option value="4">4th</option>
-                       <option value="5">5th</option>
-                       <option value="6">6th</option>
-                       <option value="7">7th</option>
-                       <option value="8">8th</option>
-                       <option value="9">9th</option>
-                       <option value="10">10th</option>
-                       <option value="11">11th</option>
-                       <option value="12">12th</option>
+                    <select id="Standards" className='border-2  h-10 rounded-md ' value={selectedStandard} onChange={handleStandardChange}>
+                    <option value="Standards" className='p-2'>Select Class </option>
+                      <option value="Pre-Nursery">Pre-Nursery</option>
+                      <option value="Nursery">Nursery</option>
+                      <option value="LKG">LKG</option>
+                      <option value="UKG">UKG</option>
+                      <option value="1st">1st</option>
+                      <option value="2nd">2nd</option>
+                      <option value="3rd">3rd</option>
+                      <option value="4th">4th</option>
+                      <option value="5th">5th</option>
+                      <option value="6th">6th</option>
+                      <option value="7th">7th</option>
+                      <option value="8th">8th</option>
+                      <option value="9th">9th</option>
+                      <option value="10th">10th</option>
+                      <option value="11th">11th</option>
+                      <option value="12th">12th</option>
                     </select>
         </div> 
        
-        <button className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
-     
+        <button  onClick={() => fetchSyllabuses(selectedStandard)} className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-bold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Search</button>
+        <button  onClick={() => fetchSyllabuses('')} className='w-[20%] h-10 mt  lg:text-xl md:text-xl sm:text-lg text-lg text-white font-semibold  border-2 rounded-md bg-blue-500 border-blue-950 hover:border-black '>Remove Filter</button>
         </div>
         <button className="bg-blue-800 text-white px-3 py-1 rounded mt-10 mb-5 font-semibold   " onClick={openSyllabusModal}>Add Syllabus</button>
         <table className="min-w-full bg-white border border-gray-300">
