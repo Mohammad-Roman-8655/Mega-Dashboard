@@ -177,6 +177,23 @@ useEffect(() => {
   fetchTeachers();
 }, []);
 
+const calculateExperience = (startDate) => {
+  if (!startDate) return "0"; // Handle cases where startDate is not provided
+
+  const start = new Date(startDate);
+  const today = new Date();
+
+  let years = today.getFullYear() - start.getFullYear();
+  let months = today.getMonth() - start.getMonth();
+
+  if (months < 0 || (months === 0 && today.getDate() < start.getDate())) {
+    years--; // Reduce one year if the current month is before the start month
+  }
+
+  return years > 0 ? years : "0"; // Ensure it doesn't return negative values
+};
+
+
  
    return (
      <div className="p-6">
@@ -192,7 +209,7 @@ useEffect(() => {
              <th className="p-3 border">Email</th>
              <th className="p-3 border">Subject</th>
              <th className="p-3 border">Qualification</th>
-             <th className="p-3 border">Experience</th>
+             <th className="p-3 border">Experience(Years)</th>
              <th className="p-3 border">Photo</th>
             
              <th className="p-3 border">Actions</th>
@@ -207,7 +224,7 @@ useEffect(() => {
                <td className="p-3 border text-center ">{Teacher.email}</td>
                <td className="p-3 border text-center ">{Teacher.subject}</td>
                <td className="p-3 border text-center ">{Teacher.qualification}</td>
-               <td className="p-3 border text-center ">{Teacher.experience}</td>
+               <td className="p-3 border text-center ">{calculateExperience(Teacher.experience)}</td>
                <td className="p-3 border text-center "><img src={Teacher.photo} alt="img" /></td>
                <td className="p-3 mt-10 flex gap-2">
                  
