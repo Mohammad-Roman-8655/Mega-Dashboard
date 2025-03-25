@@ -188,7 +188,7 @@ function Student() {
                <td className="p-3 border text-center ">{Student.standard}</td>
                <td className="p-3 border text-center ">{Student.division}</td>
                <td className="p-3 border text-center ">{Student.address}</td>
-               <td className="p-3 border text-center "><img src={Student.photo} alt="img" /></td>
+               <td className="p-3 border text-center  "><img className='w-35 h-30' src={Student.photo} alt="img" /></td>
                <td className="p-3 mt-10 flex gap-2">
                  
                  <button

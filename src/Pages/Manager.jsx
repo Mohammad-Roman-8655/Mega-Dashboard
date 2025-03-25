@@ -156,7 +156,7 @@ useEffect(() => {
                <td className="p-3 border text-center ">{Manager.email}</td>
                <td className="p-3 border text-center ">{Manager.position}</td>
                <td className="p-3 border text-center ">{Manager.experience}</td>
-               <td className="p-3 border text-center "><img src={Manager.photo} alt="img" /></td>
+               <td className="p-3 border text-center "><img className='w-45 h-40' src={Manager.photo} alt="img" /></td>
              
                <td className="p-3 mt-10 flex gap-2">
                  

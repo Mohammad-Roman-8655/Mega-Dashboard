@@ -239,7 +239,7 @@ function StudyNotes() {
                 <td className="p-3 border text-center ">{StudyNote.subjectName}</td>
                 <td className="p-3 border text-center ">{StudyNote.chapter}</td>
                 <td className="p-3 border text-center ">{StudyNote.standard}</td>
-                <td className="p-3 border text-center"><a  href={StudyNote.notesUrl}><button className="bg-blue-600 text-white px-3 py-1 rounded w-[60%] ">Download</button></a></td>
+                <td className="p-3 border text-center"><a  href={StudyNote.notesUrl}><button className="bg-blue-600 text-white px-3 py-1 rounded w-[80%] ">Download</button></a></td>
                 <td className="p-3 border flex gap-2">
                   
                   <button
