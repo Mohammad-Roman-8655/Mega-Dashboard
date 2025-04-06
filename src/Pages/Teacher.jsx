@@ -152,8 +152,8 @@ const handleDeleteTeacher = async (id) => {
     });
 
     if (response.ok) {
-      alert("Teacher deleted successfully!");
-      fetchTeachers(); // Refresh the list
+      alert("Teacher deleted successfully!");   
+      fetchTeachers(); // Refresh the list      
     } else {
       alert("Failed to delete Teacher.");
     }
