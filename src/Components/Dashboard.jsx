@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Route, Routes, NavLink } from "react-router-dom";
 
+import Login from '../Pages/Login';
 import Home from './Home';
 import Manager from '../Pages/Manager';
 import Teacher from '../Pages/Teacher';
@@ -16,6 +17,9 @@ import VideoTutorials from '../Pages/VideoTutorials';
 import ImageCarousel from '../Pages/ImageCarousel';
 import User from '../Pages/User';
 import AcademicCalender from '../Pages/AcademicCalender';
+import AdmissionForm from '../Pages/AdmissionForm';
+import Appointment from '../Pages/Appointment';
+import DownloadForm from '../Pages/DownloadForm';
 
 function Sidebar() {
   return (
@@ -30,6 +34,7 @@ function Sidebar() {
       </div>
       <ul className='w-[100%]'>
         {[
+          
           { to: '/', label: 'Home' },
           { to: '/Manager', label: 'Manager' },
           { to: '/Teacher', label: 'Teacher' },
@@ -44,7 +49,11 @@ function Sidebar() {
           { to: '/VideoTutorial', label: 'Video Tutorials' },
           { to: '/AcademicCalender', label: 'Academic Calender' },
           { to: '/ImageCarousel', label: 'Image Carousel' },
+          { to: '/admission-form', label: 'Online Admission Forms' },
+          { to: '/appointment', label: 'Appointments' },
+          { to: '/download-form', label: 'Download Forms' },
           { to: '/User', label: 'User' },
+          { to: '/login', label: 'Login' },
         ].map(({ to, label }) => (
           <li key={to} className="p-2 text-gray-300 hover:text-white cursor-pointer flex justify-between w-full text-lg hover:bg-gray-700 rounded">
             <NavLink to={to}>{label}</NavLink>
@@ -56,20 +65,20 @@ function Sidebar() {
 }
 
 function Dashboard() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userType");
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("userType");
+  //   navigate("/login");
+  // };
 
   return (
     <div className="flex">
       <Sidebar />
-      <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 absolute top-4 right-4">
+      {/* <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 absolute top-4 right-4">
         Logout
-      </button>
+      </button> */}
       <div className="flex-1 p-4">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -86,7 +95,11 @@ function Dashboard() {
           <Route path="/VideoTutorial" element={<VideoTutorials />} />
           <Route path="/AcademicCalender" element={<AcademicCalender />} />
           <Route path="/ImageCarousel" element={<ImageCarousel />} />
+          <Route path="/admission-form" element={<AdmissionForm/>} />
+          <Route path="/appointment" element={<Appointment />} />
+          <Route path="/download-form" element={<DownloadForm />} />
           <Route path="/User" element={<User />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </div>
