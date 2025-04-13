@@ -95,7 +95,7 @@ const handleInputChange = (e) => {
 
 const handleAddTeacher = async () => {
   try {
-    const response = await fetch("http://localhost:8080/Teacher", {
+    const response = await fetch("${API_URL}/teacher", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +123,7 @@ const handleEditInputChange = (e) => {
 
 const handleUpdateTeacher = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/Teacher/${editingTeacher._id}`, {
+    const response = await fetch(`${API_URL}/teacher/${editingTeacher._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -147,7 +147,7 @@ const handleDeleteTeacher = async (id) => {
   if (!window.confirm("Are you sure you want to delete this Teacher?")) return;
 
   try {
-    const response = await fetch(`http://localhost:8080/Teacher/${id}`, {
+    const response = await fetch(`${API_URL}/teacher/${id}`, {
       method: "DELETE",
     });
 
@@ -165,7 +165,7 @@ const [Teachers, setTeachers] = useState([]);
 
 const fetchTeachers = async () => {
   try {
-    const response = await fetch("http://localhost:8080/Teacher");
+    const response = await fetch("${API_URL}/teacher");
     const data = await response.json();
     setTeachers(data);
   } catch (error) {

@@ -73,7 +73,7 @@ function User() {
     
     const handleAddUser = async () => {
       try {
-        const response = await fetch("http://localhost:8080/User", {
+        const response = await fetch(`${API_URL}/user`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -101,7 +101,7 @@ function User() {
     
     const handleUpdateUser = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/User/${editingUser._id}`, {
+        const response = await fetch(`${API_URL}/user/${editingUser._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -125,7 +125,7 @@ function User() {
       if (!window.confirm("Are you sure you want to delete this User?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/User/${id}`, {
+        const response = await fetch(`${API_URL}/user/${id}`, {
           method: "DELETE",
         });
     
@@ -143,7 +143,7 @@ function User() {
     
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8080/User");
+        const response = await fetch(`${API_URL}/user`);
         const data = await response.json();
         setUsers(data);
       } catch (error) {

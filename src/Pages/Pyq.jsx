@@ -96,7 +96,7 @@ function Pyq() {
      
      const handleAddPyq = async () => {
        try {
-         const response = await fetch("http://localhost:8080/Pyq", {
+         const response = await fetch(`${API_URL}/pyq`, {
            method: "POST",
            headers: {
              "Content-Type": "application/json",
@@ -124,7 +124,7 @@ function Pyq() {
      
      const handleUpdatePyq = async () => {
        try {
-         const response = await fetch(`http://localhost:8080/Pyq/${editingPyq._id}`, {
+         const response = await fetch(`${API_URL}/pyq/${editingPyq._id}`, {
            method: "PUT",
            headers: {
              "Content-Type": "application/json",
@@ -148,7 +148,7 @@ function Pyq() {
        if (!window.confirm("Are you sure you want to delete this Pyq?")) return;
      
        try {
-         const response = await fetch(`http://localhost:8080/Pyq/${id}`, {
+         const response = await fetch(`${API_URL}/pyq/${id}`, {
            method: "DELETE",
          });
      
@@ -169,8 +169,8 @@ function Pyq() {
        const fetchPyqs = async (standard = "") => {
          try {
            const url = standard
-             ? `http://localhost:8080/Pyq?standard=${standard}`
-             : "http://localhost:8080/Pyq";
+             ? `${API_URL}/pyq?standard=${standard}`
+             : `${API_URL}/pyq`;
            const response = await fetch(url);
            const data = await response.json();
            setPyqs(data);

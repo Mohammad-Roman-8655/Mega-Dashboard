@@ -68,7 +68,7 @@ function MockPaper() {
  
  const handleAddMockPaper = async () => {
    try {
-     const response = await fetch("http://localhost:8080/MockPaper", {
+     const response = await fetch(`${API_URL}/mock-paper`, {
        method: "POST",
        headers: {
          "Content-Type": "application/json",
@@ -96,7 +96,7 @@ function MockPaper() {
  
  const handleUpdateMockPaper = async () => {
    try {
-     const response = await fetch(`http://localhost:8080/MockPaper/${editingMockPaper._id}`, {
+     const response = await fetch(`${API_URL}/mock-paper/${editingMockPaper._id}`, {
        method: "PUT",
        headers: {
          "Content-Type": "application/json",
@@ -120,7 +120,7 @@ function MockPaper() {
    if (!window.confirm("Are you sure you want to delete this MockPaper?")) return;
  
    try {
-     const response = await fetch(`http://localhost:8080/MockPaper/${id}`, {
+     const response = await fetch(`${API_URL}/mock-paper/${id}`, {
        method: "DELETE",
      });
  
@@ -142,8 +142,8 @@ function MockPaper() {
         const fetchMockPapers = async (standard = "") => {
           try {
             const url = standard
-              ? `http://localhost:8080/MockPaper?standard=${standard}`
-              : "http://localhost:8080/MockPaper";
+              ? `${API_URL}/mock-paper?standard=${standard}`
+              : `${API_URL}/mock-paper`;
             const response = await fetch(url);
             const data = await response.json();
             setMockPapers(data);

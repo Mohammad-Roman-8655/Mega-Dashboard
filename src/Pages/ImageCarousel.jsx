@@ -70,7 +70,7 @@ function ImageCarousel() {
      
      const handleAddImageCarousel = async () => {
        try {
-         const response = await fetch("http://localhost:8080/ImageCarousel", {
+         const response = await fetch(`${API_URL}/image-carousel`, {
            method: "POST",
            headers: {
              "Content-Type": "application/json",
@@ -98,7 +98,7 @@ function ImageCarousel() {
      
      const handleUpdateImageCarousel = async () => {
        try {
-         const response = await fetch(`http://localhost:8080/ImageCarousel/${editingImageCarousel._id}`, {
+         const response = await fetch(`${API_URL}/image-carousel/${editingImageCarousel._id}`, {
            method: "PUT",
            headers: {
              "Content-Type": "application/json",
@@ -122,7 +122,7 @@ function ImageCarousel() {
        if (!window.confirm("Are you sure you want to delete this ImageCarousel?")) return;
      
        try {
-         const response = await fetch(`http://localhost:8080/ImageCarousel/${id}`, {
+         const response = await fetch(`${API_URL}/image-carousel/${id}`, {
            method: "DELETE",
          });
      
@@ -140,7 +140,7 @@ function ImageCarousel() {
      
      const fetchImageCarousels = async () => {
        try {
-         const response = await fetch("http://localhost:8080/ImageCarousel");
+         const response = await fetch(`${API_URL}/image-carousel`);
          const data = await response.json();
          setImageCarousels(data);
        } catch (error) {

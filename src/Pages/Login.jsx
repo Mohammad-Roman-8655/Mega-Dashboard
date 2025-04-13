@@ -15,7 +15,7 @@ const Login = () => {
     console.log("Sending request with:", { email, password });
 
     try {
-      const response = await fetch("http://localhost:8080/dashboard/auth/login", {
+      const response = await fetch(`${API_URL}/dashboard/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

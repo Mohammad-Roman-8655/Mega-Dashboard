@@ -74,7 +74,7 @@ function NoticeBoard() {
    
    const handleAddNotice = async () => {
      try {
-       const response = await fetch("http://localhost:8080/Notice", {
+       const response = await fetch(`${API_URL}/notice`, {
          method: "POST",
          headers: {
            "Content-Type": "application/json",
@@ -102,7 +102,7 @@ function NoticeBoard() {
    
    const handleUpdateNotice = async () => {
      try {
-       const response = await fetch(`http://localhost:8080/Notice/${editingNotice._id}`, {
+       const response = await fetch(`${API_URL}/notice/${editingNotice._id}`, {
          method: "PUT",
          headers: {
            "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function NoticeBoard() {
      if (!window.confirm("Are you sure you want to delete this Notice?")) return;
    
      try {
-       const response = await fetch(`http://localhost:8080/Notice/${id}`, {
+       const response = await fetch(`${API_URL}/notice/${id}`, {
          method: "DELETE",
        });
    
@@ -144,7 +144,7 @@ function NoticeBoard() {
    
    const fetchNotices = async () => {
      try {
-       const response = await fetch("http://localhost:8080/Notice");
+       const response = await fetch(`${API_URL}/notice`);
        const data = await response.json();
        setNotices(data);
      } catch (error) {

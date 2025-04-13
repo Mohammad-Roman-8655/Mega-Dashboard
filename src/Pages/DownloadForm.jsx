@@ -73,7 +73,7 @@ function DownloadForm() {
    
    const handleUpdateDownloadForm = async () => {
      try {
-       const response = await fetch(`http://localhost:8080/download-form/${editingDownloadForm._id}`, {
+       const response = await fetch(`${API_URL}/download-form/${editingDownloadForm._id}`, {
          method: "PUT",
          headers: {
            "Content-Type": "application/json",
@@ -97,7 +97,7 @@ function DownloadForm() {
    
    const fetchDownloadForms = async () => {
      try {
-       const response = await fetch("http://localhost:8080/download-form");
+       const response = await fetch(`${API_URL}/download-form`);
        const data = await response.json();
        setDownloadForms(data);
      } catch (error) {

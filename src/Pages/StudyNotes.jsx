@@ -76,7 +76,7 @@ function StudyNotes() {
     
     const handleAddStudyNote = async () => {
       try {
-        const response = await fetch("http://localhost:8080/StudyNotes", {
+        const response = await fetch(`${API_URL}/study-notes`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -104,7 +104,7 @@ function StudyNotes() {
     
     const handleUpdateStudyNote = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/StudyNotes/${editingStudyNote._id}`, {
+        const response = await fetch(`${API_URL}/study-notes/${editingStudyNote._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -128,7 +128,7 @@ function StudyNotes() {
       if (!window.confirm("Are you sure you want to delete this StudyNote?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/StudyNotes/${id}`, {
+        const response = await fetch(`${API_URL}/study-notes/${id}`, {
           method: "DELETE",
         });
     
@@ -151,8 +151,8 @@ function StudyNotes() {
             const fetchStudyNotes = async (standard = "", subjectName = "") => {
               try {
                 const url = (standard && subjectName)
-                  ? `http://localhost:8080/StudyNotes?standard=${standard}&subjectName=${subjectName}`
-                  : "http://localhost:8080/StudyNotes";
+                  ? `${API_URL}/study-notes?standard=${standard}&subjectName=${subjectName}`
+                  : `${API_URL}/study-notes`;
                 const response = await fetch(url);
                 const data = await response.json();
                 setStudyNotes(data);

@@ -109,7 +109,7 @@ function AdmissionForm() {
     
     const handleAdmissionForm = async () => {
       try {
-        const response = await fetch("http://localhost:8080/admission-form", {
+        const response = await fetch(`${API_URL}/admission-form`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -189,7 +189,7 @@ const handleEditInputChange = (e) => {
 
 const handleUpdateAdmissionForm = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/admission-form/${editingAdmissionForm._id}`, {
+    const response = await fetch(`${API_URL}/admission-form/${editingAdmissionForm._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +213,7 @@ const handleDeleteAdmissionForm = async (id) => {
   if (!window.confirm("Are you sure you want to delete this AdmissionForm?")) return;
 
   try {
-    const response = await fetch(`http://localhost:8080/admission-form/${id}`, {
+    const response = await fetch(`${API_URL}/admission-form/${id}`, {
       method: "DELETE",
     });
 
@@ -231,7 +231,7 @@ const [AdmissionForms, setAdmissionForms] = useState([]);
 
 const fetchAdmissionForms = async () => {
   try {
-    const response = await fetch("http://localhost:8080/admission-form");
+    const response = await fetch(`${API_URL}/admission-form`);
     const data = await response.json();
     setAdmissionForms(data);
   } catch (error) {

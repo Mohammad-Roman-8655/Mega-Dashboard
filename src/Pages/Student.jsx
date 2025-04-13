@@ -42,7 +42,7 @@ function Student() {
   
   const handleAddStudent = async () => {
     try {
-      const response = await fetch("http://localhost:8080/Student", {
+      const response = await fetch(`${API_URL}/student`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ function Student() {
   
   const handleUpdateStudent = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/Student/${editingStudent._id}`, {
+      const response = await fetch(`${API_URL}/student/${editingStudent._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -94,7 +94,7 @@ function Student() {
     if (!window.confirm("Are you sure you want to delete this Student?")) return;
   
     try {
-      const response = await fetch(`http://localhost:8080/Student/${id}`, {
+      const response = await fetch(`${API_URL}/student/${id}`, {
         method: "DELETE",
       });
   
@@ -115,8 +115,8 @@ function Student() {
   const fetchStudents = async (standard = "") => {
     try {
       const url = standard
-        ? `http://localhost:8080/Student?standard=${standard}`
-        : "http://localhost:8080/Student";
+        ? `${API_URL}/student?standard=${standard}`
+        : `${API_URL}/student`;
       const response = await fetch(url);
       const data = await response.json();
       setStudents(data);

@@ -76,7 +76,7 @@ const [isAddAssignmentModalOpen,setIsAddAssignmentModalOpen]=useState(false);
     
     const handleAddAssignment = async () => {
       try {
-        const response = await fetch("http://localhost:8080/Assignment", {
+        const response = await fetch(`${API_URL}/assignment`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -104,7 +104,7 @@ const [isAddAssignmentModalOpen,setIsAddAssignmentModalOpen]=useState(false);
     
     const handleUpdateAssignment = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/Assignment/${editingAssignment._id}`, {
+        const response = await fetch(`${API_URL}/assignment/${editingAssignment._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -128,7 +128,7 @@ const [isAddAssignmentModalOpen,setIsAddAssignmentModalOpen]=useState(false);
       if (!window.confirm("Are you sure you want to delete this Assignment?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/Assignment/${id}`, {
+        const response = await fetch(`${API_URL}/assignment/${id}`, {
           method: "DELETE",
         });
     
@@ -149,8 +149,8 @@ const [isAddAssignmentModalOpen,setIsAddAssignmentModalOpen]=useState(false);
             const fetchAssignments = async (standard = "") => {
               try {
                 const url = standard
-                  ? `http://localhost:8080/Assignment?standard=${standard}`
-                  : "http://localhost:8080/Assignment";
+                  ? `${API_URL}/assignment?standard=${standard}`
+                  : `${API_URL}/assignment`;
                 const response = await fetch(url);
                 const data = await response.json();
                 setAssignments(data);

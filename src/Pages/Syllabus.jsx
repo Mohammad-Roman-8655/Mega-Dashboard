@@ -66,7 +66,7 @@ function Syllabus() {
     
     const handleAddSyllabus = async () => {
       try {
-        const response = await fetch("http://localhost:8080/Syllabus", {
+        const response = await fetch(`${API_URL}/syllabus`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -94,7 +94,7 @@ function Syllabus() {
     
     const handleUpdateSyllabus = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/Syllabus/${editingSyllabus._id}`, {
+        const response = await fetch(`${API_URL}/syllabus/${editingSyllabus._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -118,7 +118,7 @@ function Syllabus() {
       if (!window.confirm("Are you sure you want to delete this Syllabus?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/Syllabus/${id}`, {
+        const response = await fetch(`${API_URL}/syllabus/${id}`, {
           method: "DELETE",
         });
     
@@ -139,8 +139,8 @@ function Syllabus() {
         const fetchSyllabuses = async (standard = "") => {
           try {
             const url = standard
-              ? `http://localhost:8080/Syllabus?standard=${standard}`
-              : "http://localhost:8080/Syllabus";
+              ? `${API_URL}/syllabus?standard=${standard}`
+              : `${API_URL}/syllabus`;
             const response = await fetch(url);
             const data = await response.json();
             setSyllabuses(data);

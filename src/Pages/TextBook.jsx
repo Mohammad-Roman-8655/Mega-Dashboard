@@ -66,7 +66,7 @@ function TextBook() {
     
     const handleAddTextBook = async () => {
       try {
-        const response = await fetch("http://localhost:8080/TextBook", {
+        const response = await fetch(`${API_URL}/text-book`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -94,7 +94,7 @@ function TextBook() {
     
     const handleUpdateTextBook = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/TextBook/${editingTextBook._id}`, {
+        const response = await fetch(`${API_URL}/text-book/${editingTextBook._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -118,7 +118,7 @@ function TextBook() {
       if (!window.confirm("Are you sure you want to delete this TextBook?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/TextBook/${id}`, {
+        const response = await fetch(`${API_URL}/text-book/${id}`, {
           method: "DELETE",
         });
     
@@ -140,8 +140,8 @@ function TextBook() {
             const fetchTextBooks = async (standard = "") => {
               try {
                 const url = standard
-                  ? `http://localhost:8080/TextBook?standard=${standard}`
-                  : "http://localhost:8080/TextBook";
+                  ? `${API_URL}/text-book?standard=${standard}`
+                  : `${API_URL}/text-book`;
                 const response = await fetch(url);
                 const data = await response.json();
                 setTextBooks(data);

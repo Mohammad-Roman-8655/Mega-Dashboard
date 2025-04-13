@@ -59,7 +59,7 @@ function Appointment() {
       if (!window.confirm("Are you sure you want to delete this Appointment?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/appointment/${id}`, {
+        const response = await fetch(`${API_URL}/appointment/${id}`, {
           method: "DELETE",
         });
     
@@ -80,7 +80,7 @@ function Appointment() {
             // Fetch students with optional filtering by standard
             const fetchAppointments = async () => {
               try {
-                const response = await fetch("http://localhost:8080/appointment");
+                const response = await fetch(`${API_URL}/appointment`);
                 const data = await response.json();
                 setAppointments(data);
               } catch (error) {

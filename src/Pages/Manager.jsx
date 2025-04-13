@@ -45,7 +45,7 @@ const handleInputChange = (e) => {
 
 const handleAddManager = async () => {
   try {
-    const response = await fetch("http://localhost:8080/Manager", {
+    const response = await fetch(`${API_URL}/manager`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ const handleEditInputChange = (e) => {
 
 const handleUpdateManager = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/Manager/${editingManager._id}`, {
+    const response = await fetch(`${API_URL}/manager/${editingManager._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +97,7 @@ const handleDeleteManager = async (id) => {
   if (!window.confirm("Are you sure you want to delete this manager?")) return;
 
   try {
-    const response = await fetch(`http://localhost:8080/Manager/${id}`, {
+    const response = await fetch(`${API_URL}/manager/${id}`, {
       method: "DELETE",
     });
 
@@ -115,7 +115,7 @@ const [managers, setManagers] = useState([]);
 
 const fetchManagers = async () => {
   try {
-    const response = await fetch("http://localhost:8080/Manager");
+    const response = await fetch(`${API_URL}/manager`);
     const data = await response.json();
     setManagers(data);
   } catch (error) {

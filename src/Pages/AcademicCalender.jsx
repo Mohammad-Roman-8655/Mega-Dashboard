@@ -70,7 +70,7 @@ function AcademicCalender() {
       
       const handleAddAcademicCalender = async () => {
         try {
-          const response = await fetch("http://localhost:8080/AcademicCalender", {
+          const response = await fetch(`${API_URL}/academic-calender`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -98,7 +98,7 @@ function AcademicCalender() {
       
       const handleUpdateAcademicCalender = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/AcademicCalender/${editingAcademicCalender._id}`, {
+          const response = await fetch(`${API_URL}/academic-calender/${editingAcademicCalender._id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -122,7 +122,7 @@ function AcademicCalender() {
         if (!window.confirm("Are you sure you want to delete this AcademicCalender?")) return;
       
         try {
-          const response = await fetch(`http://localhost:8080/AcademicCalender/${id}`, {
+          const response = await fetch(`${API_URL}/academic-calender/${id}`, {
             method: "DELETE",
           });
       
@@ -140,7 +140,7 @@ function AcademicCalender() {
       
       const fetchAcademicCalenders = async () => {
         try {
-          const response = await fetch("http://localhost:8080/AcademicCalender");
+          const response = await fetch(`${API_URL}/academic-calender`);
           const data = await response.json();
           setAcademicCalenders(data);
         } catch (error) {

@@ -74,7 +74,7 @@ function VideoTutorials() {
     
     const handleAddVideoTutorial = async () => {
       try {
-        const response = await fetch("http://localhost:8080/VideoTutorial", {
+        const response = await fetch(`${API_URL}/video-tutorial`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -102,7 +102,7 @@ function VideoTutorials() {
     
     const handleUpdateVideoTutorial = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/VideoTutorial/${editingVideoTutorial._id}`, {
+        const response = await fetch(`${API_URL}/video-tutorial/${editingVideoTutorial._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function VideoTutorials() {
       if (!window.confirm("Are you sure you want to delete this VideoTutorial?")) return;
     
       try {
-        const response = await fetch(`http://localhost:8080/VideoTutorial/${id}`, {
+        const response = await fetch(`${API_URL}/video-tutorial/${id}`, {
           method: "DELETE",
         });
     
@@ -149,8 +149,8 @@ function VideoTutorials() {
               const fetchVideoTutorials = async (standard = "", subjectName = "") => {
                 try {
                   const url = (standard && subjectName)
-                    ? `http://localhost:8080/VideoTutorial?standard=${standard}&subjectName=${subjectName}`
-                    : "http://localhost:8080/VideoTutorial";
+                    ? `${API_URL}/video-tutorial?standard=${standard}&subjectName=${subjectName}`
+                    : `${API_URL}/video-tutorial`;
                   const response = await fetch(url);
                   const data = await response.json();
                   setVideoTutorials(data);
