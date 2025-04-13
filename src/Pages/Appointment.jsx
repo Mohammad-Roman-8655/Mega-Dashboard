@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react';
+import { API_URL } from '../config/apiConfig';
 
 
 //     standard: "10th",

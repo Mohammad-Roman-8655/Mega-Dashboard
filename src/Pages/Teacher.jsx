@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react';
+import { API_URL } from '../config/apiConfig';
 // const TeachersData = [
 //   {
 //     name: "Rajesh Kumar",
@@ -95,7 +96,7 @@ const handleInputChange = (e) => {
 
 const handleAddTeacher = async () => {
   try {
-    const response = await fetch("${API_URL}/teacher", {
+    const response = await fetch(`${API_URL}/teacher`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -165,7 +166,7 @@ const [Teachers, setTeachers] = useState([]);
 
 const fetchTeachers = async () => {
   try {
-    const response = await fetch("${API_URL}/teacher");
+    const response = await fetch(`${API_URL}/teacher`);
     const data = await response.json();
     setTeachers(data);
   } catch (error) {
