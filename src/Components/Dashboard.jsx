@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, Route, Routes, NavLink } from "react-router-dom";
 
 import Login from '../Pages/Login';
+import Register from '../Pages/Register'
 import Home from './Home';
 import Manager from '../Pages/Manager';
 import Teacher from '../Pages/Teacher';
@@ -54,6 +55,7 @@ function Sidebar() {
           { to: '/download-form', label: 'Download Forms' },
           { to: '/User', label: 'User' },
           { to: '/login', label: 'Login' },
+          { to: '/register', label: 'Register' },
         ].map(({ to, label }) => (
           <li key={to} className="p-2 text-gray-300 hover:text-white cursor-pointer flex justify-between w-full text-lg hover:bg-gray-700 rounded">
             <NavLink to={to}>{label}</NavLink>
@@ -100,6 +102,7 @@ function Dashboard() {
           <Route path="/download-form" element={<DownloadForm />} />
           <Route path="/User" element={<User />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </div>
